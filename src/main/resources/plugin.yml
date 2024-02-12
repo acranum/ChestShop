@@ -1,0 +1,26 @@
+name: ChestShop
+version: '${project.version}'
+main: de.minnivini.chestshop.ChestShop
+api-version: '1.19'
+commands:
+  chestshop:
+    description: Zeigt infos über den Shop
+permissions:
+  chestshop.shopinfo:
+    description: Allows players to run the /cs info command
+    default: true
+  chestshop.create:
+    description: Allows players to create sign shops
+    default: true
+  chestshop.buy:
+    description: Allows players to buy items from shops
+    default: true
+  chestshop.break:
+    description: Allows players to break shops
+    default: true
+  chestshop.tp:
+    description: Allows Players to teleport to shops by using /cs info
+    default: true
+  chestshop.admincreate:
+    description: Allows Players to create admin Shops
+    default: op
