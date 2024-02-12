@@ -1,5 +1,6 @@
 package de.minnivini.chestshop.commands;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -11,26 +12,15 @@ import java.util.List;
 public class tabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String string, String[] strings) {
-        if (command.getName().equalsIgnoreCase("chestshop")) {
-            List<String> list = new ArrayList<>();
-            if (string.length() == 1) {
-                list.add("info");
-                list.add("search");
-                Collections.sort(list);
-                return list;
-            } else if (strings.length == 2) {
-                List<String> completer = new ArrayList<>();
-                String arg = strings[0].toLowerCase();
-                for (String s : list) {
-                    if (s.toLowerCase().startsWith(arg)) {
-                        completer.remove(s);
-                    }
-                }
-                Collections.sort(completer);
-                return completer;
+        List<String> list = new ArrayList<>();
+        if (strings.length == 1) {
+            list.add("info");
+            list.add("search");
+        } else if (strings.length == 2) {
+            for (Material value : Material.values()) {
+                list.add(value.toString().toLowerCase());
             }
-
         }
-        return null;
+        return list;
     }
 }

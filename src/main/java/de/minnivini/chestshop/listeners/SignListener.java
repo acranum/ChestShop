@@ -47,7 +47,7 @@ public class SignListener implements Listener {
                         lang.getMessage("FalseWorld");
                     } else {
                         e.setLine(0, "§a[Shop]");
-                        e.setLine(2, "IcBinKakaWuzt");
+                        e.setLine(2, player);
                         Preis = e.getLine(1);
                         int xCoord = e.getBlock().getLocation().getBlockX();
                         int yCoord = e.getBlock().getLocation().getBlockY();

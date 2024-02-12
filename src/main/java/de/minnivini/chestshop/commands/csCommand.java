@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class csCommand implements CommandExecutor, TabCompleter {
+public class csCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -40,18 +40,6 @@ public class csCommand implements CommandExecutor, TabCompleter {
             } else player.sendMessage(lang.getMessage("noArr"));
         }
         return false;
-    }
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String string, String[] strings) {
-        List<String> list = new ArrayList<>();
-        if (strings.length == 1) {
-            list.add("info");
-            list.add("search");
-        } else if (strings.length == 2) {
-            for (Material value : Material.values()) {
-                list.add(value.toString().toLowerCase());
-            }
-        }
-        return list;
     }
 
 }
