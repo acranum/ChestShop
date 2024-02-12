@@ -8,12 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class tabCompleter implements org.bukkit.command.TabCompleter {
+public class tabCompleter implements TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String string, String[] strings) {
-        List<String> list = new ArrayList<>();
-
-        if (command.getName().equalsIgnoreCase("cs")) {
+        if (command.getName().equalsIgnoreCase("chestshop")) {
+            List<String> list = new ArrayList<>();
             if (string.length() == 1) {
                 list.add("info");
                 list.add("search");
@@ -24,11 +23,11 @@ public class tabCompleter implements org.bukkit.command.TabCompleter {
                 String arg = strings[0].toLowerCase();
                 for (String s : list) {
                     if (s.toLowerCase().startsWith(arg)) {
-                        list.remove(s);
+                        completer.remove(s);
                     }
                 }
-                Collections.sort(list);
-                return list;
+                Collections.sort(completer);
+                return completer;
             }
 
         }

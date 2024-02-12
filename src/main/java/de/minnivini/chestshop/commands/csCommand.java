@@ -2,6 +2,8 @@ package de.minnivini.chestshop.commands;
 
 import de.minnivini.chestshop.GUIs.InfoGUI;
 import de.minnivini.chestshop.Util.lang;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class csCommand implements CommandExecutor{
+public class csCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -27,7 +29,7 @@ public class csCommand implements CommandExecutor{
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("info")) {
                     InfoGUI.InfoGUI(commandSender);
-                } else if (args[0].equalsIgnoreCase("search")) {
+                } else if (args[0].equalsIgnoreCase("search") && player.hasPermission("chestshop.search")) {
                     if (args.length > 1) {
                         String material = args[1].toUpperCase();
                         search.search(material, player);
@@ -38,6 +40,18 @@ public class csCommand implements CommandExecutor{
             } else player.sendMessage(lang.getMessage("noArr"));
         }
         return false;
+    }
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String string, String[] strings) {
+        List<String> list = new ArrayList<>();
+        if (strings.length == 1) {
+            list.add("info");
+            list.add("search");
+        } else if (strings.length == 2) {
+            for (Material value : Material.values()) {
+                list.add(value.toString().toLowerCase());
+            }
+        }
+        return list;
     }
 
 }

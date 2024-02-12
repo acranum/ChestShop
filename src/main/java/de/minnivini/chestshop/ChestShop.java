@@ -50,7 +50,7 @@ public final class ChestShop extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        getCommand("chestshop").setTabCompleter(new tabCompleter());
+        getCommand("chestshop").setTabCompleter(new csCommand());
         getCommand("chestshop").setExecutor(new csCommand());
     }
 

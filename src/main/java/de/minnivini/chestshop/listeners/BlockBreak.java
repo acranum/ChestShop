@@ -21,40 +21,47 @@ public class BlockBreak implements Listener {
             int zCoord = e.getBlock().getLocation().getBlockZ();
             if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord) != null) {
                 if (player.hasPermission("chestshop.break")) {
-                    ChestShop.getPlugin(ChestShop.class).removeItemFromShopConfig(player.getWorld().getName() ,xCoord, yCoord, zCoord);
+                    ChestShop.getPlugin(ChestShop.class).removeItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord);
+                    if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord) == null) {
+                        player.sendMessage(lang.getMessage("shopRemove"));
+                    } else player.sendMessage(lang.getMessage("shopRemoveErr"));
+                } else if (((Sign) e.getBlock().getState()).getLine(2).equalsIgnoreCase(e.getPlayer().getName())) {
+                    ChestShop.getPlugin(ChestShop.class).removeItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord);
                     if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord) == null) {
                         player.sendMessage(lang.getMessage("shopRemove"));
                     } else player.sendMessage(lang.getMessage("shopRemoveErr"));
                 } else {
-                    e.setCancelled(true);
+                e.setCancelled(true);
                 }
             }
         }
     }
+
     @EventHandler
     public void ChestBreak(BlockBreakEvent e) {
         Player player = e.getPlayer();
+        String playerName = e.getPlayer().getName();
         //if (e.getBlock().getType().toString().contains("CHEST")) {
-            int[][] directions = {{0, 0, 1}, {0 , 0, -1}, {1, 0, 0}, {-1, 0, 0}};
-            Location chestLocation = e.getBlock().getLocation();
-            for (int[] direction: directions) {
-                int xOffset = direction[0];
-                int yOffset = direction[1];
-                int zOffset = direction[2];
+        int[][] directions = {{0, 0, 1}, {0, 0, -1}, {1, 0, 0}, {-1, 0, 0}};
+        Location chestLocation = e.getBlock().getLocation();
+        for (int[] direction : directions) {
+            int xOffset = direction[0];
+            int yOffset = direction[1];
+            int zOffset = direction[2];
 
-                Location currentLocation = new Location(chestLocation.getWorld(), chestLocation.getBlockX() + xOffset, chestLocation.getBlockY() + yOffset, chestLocation.getBlockZ() + zOffset);
-                Block currentBlock = currentLocation.getBlock();
+            Location currentLocation = new Location(chestLocation.getWorld(), chestLocation.getBlockX() + xOffset, chestLocation.getBlockY() + yOffset, chestLocation.getBlockZ() + zOffset);
+            Block currentBlock = currentLocation.getBlock();
 
-                if (currentBlock.getState() instanceof Sign) {
-                    Sign sign = (Sign) currentBlock.getState();
-                    if (sign.getLine(0).equalsIgnoreCase("§a[Shop]") || sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
-
+            if (currentBlock.getState() instanceof Sign) {
+                Sign sign = (Sign) currentBlock.getState();
+                if (sign.getLine(0).equalsIgnoreCase("§a[Shop]") || sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
+                    if (sign.getLine(2).equalsIgnoreCase(playerName)) {
                         int xCoord = currentLocation.getBlockX();
                         int yCoord = currentLocation.getBlockY();
                         int zCoord = currentLocation.getBlockZ();
                         if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord) != null) {
                             if (player.hasPermission("chestshop.break")) {
-                                ChestShop.getPlugin(ChestShop.class).removeItemFromShopConfig(player.getWorld().getName() ,xCoord, yCoord, zCoord);
+                                ChestShop.getPlugin(ChestShop.class).removeItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord);
                                 if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord) == null) {
                                     player.sendMessage(lang.getMessage("shopRemove"));
                                 } else {
@@ -63,9 +70,13 @@ public class BlockBreak implements Listener {
                                 }
                             } else e.setCancelled(true);
                         }
+                    } else {
+                        e.setCancelled(true);
+                        player.sendMessage(lang.getMessage("noShopBreakPerm"));
                     }
                 }
             }
-        //}
+            //}
+        }
     }
 }

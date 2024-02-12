@@ -17,6 +17,7 @@
 "ErrorOccurred": "§4Es ist ein Fehler aufgetreten"
 "FalseWorld": "§4Du kannst in dieser Region keine Shops bauen!"
 "noShop": "§cKein Shop für das Item gefunden! "
+"noShopBreakPerm": "§cDu kannst den Shop nicht zerstören, da es nicht deiner ist!"
 
 #SuccessMessages
 "ShopCreatewitch": "§aDu hast erfolgreich einen Shop erstellt, welcher "
