@@ -2,7 +2,7 @@
 "PlayerOnly": "§4Dieser Befehl kann nur von Spielern ausgeführt werden :8"
 "NoLanguage": "§4Bitte nenne eine verfügbare Sprache"
 "FileNotExists": "§4Es gibt keine Datei unter diesem Namen!"
-"lookatSign": "§4Du musst auf ein Shopschild gucken!"
+"lookatSign": "§cDu musst auf ein Shopschild gucken!"
 "notEnoughMoney": "§cDu hast nicht genug Geld, um das zu kaufen!"
 "noChestBehindSign": "§cEs wurde keine Truhe hinter dem Schild gefunden!"
 "invalidMaterial": "§4Ungültiges Material auf dem Schild!"

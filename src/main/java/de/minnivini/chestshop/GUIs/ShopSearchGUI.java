@@ -5,52 +5,49 @@ import de.minnivini.chestshop.Util.ItemBuilder;
 import de.minnivini.chestshop.ChestShop;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ShopSearchGUI {
     public void ShopSearch(Player p, List<String> shops, String material) {
         Inventory inventory;
-
+        ItemStack Black_glass = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build();
+        ItemStack Red_glass = new ItemBuilder(Material.RED_STAINED_GLASS_PANE).build();
         inventory = Bukkit.createInventory(null, 27, "§bShop Search");
 
-        inventory.setItem(0, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(1, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(2, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(3, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(4, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(5, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(6, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(7, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(8, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(9, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
+        inventory.setItem(0, Black_glass);
+        inventory.setItem(1, Black_glass);
+        inventory.setItem(2, Black_glass);
+        inventory.setItem(3, Black_glass);
+        inventory.setItem(4, Black_glass);
+        inventory.setItem(5, Black_glass);
+        inventory.setItem(6, Black_glass);
+        inventory.setItem(7, Black_glass);
+        inventory.setItem(8, Black_glass);
+        inventory.setItem(9, Black_glass);
 
-        inventory.setItem(10, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).build());
-        inventory.setItem(11, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).build());
-        inventory.setItem(12, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).build());
-        inventory.setItem(13, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).build());
-        inventory.setItem(14, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).build());
-        inventory.setItem(15, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).build());
-        inventory.setItem(16, new ItemBuilder(Material.RED_STAINED_GLASS_PANE).build());
+        inventory.setItem(10, Red_glass);
+        inventory.setItem(11, Red_glass);
+        inventory.setItem(12, Red_glass);
+        inventory.setItem(13, Red_glass);
+        inventory.setItem(14, Red_glass);
+        inventory.setItem(15, Red_glass);
+        inventory.setItem(16, Red_glass);
 
-        inventory.setItem(17, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(18, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(19, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(20, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(21, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(22, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(23, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(24, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(25, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
-        inventory.setItem(26, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build());
+        inventory.setItem(17, Black_glass);
+        inventory.setItem(18, Black_glass);
+        inventory.setItem(19, Black_glass);
+        inventory.setItem(20, Black_glass);
+        inventory.setItem(21, Black_glass);
+        inventory.setItem(22, Black_glass);
+        inventory.setItem(23, Black_glass);
+        inventory.setItem(24, Black_glass);
+        inventory.setItem(25, Black_glass);
+        inventory.setItem(26, Black_glass);
 
         for (int i = 0; i < shops.size(); i++) {
             String Koordinaten = shops.get(i);

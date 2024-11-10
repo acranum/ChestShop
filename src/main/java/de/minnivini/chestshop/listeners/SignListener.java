@@ -5,7 +5,6 @@ import de.minnivini.chestshop.Util.lang;
 import de.minnivini.chestshop.Util.util;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.*;
@@ -13,17 +12,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.checkerframework.checker.units.qual.C;
 
-import java.nio.Buffer;
 import java.util.List;
-import java.util.UUID;
 
 public class SignListener implements Listener {
     public String itemName;
@@ -34,14 +28,13 @@ public class SignListener implements Listener {
         //erstellung vom schild
         String Preis = null;
         Player p = e.getPlayer();
-        String player = e.getPlayer().getName();
+        String player = p.getName();
+        if (e.getLine(0).equalsIgnoreCase("[Shop]") && p.hasPermission("chestshop.create")) {
+            if (e.getBlock().getType().toString().endsWith("_WALL_SIGN")) {
+                Block attachedBlock = e.getBlock().getRelative(((org.bukkit.block.data.type.WallSign) e.getBlock().getBlockData()).getFacing().getOppositeFace());
+                if (attachedBlock.getType() == Material.CHEST || attachedBlock.getType() == Material.TRAPPED_CHEST) {
+                    BlockState state = attachedBlock.getState();
 
-        if (e.getBlock().getType().toString().endsWith("_WALL_SIGN")) {
-            Block attachedBlock = e.getBlock().getRelative(((org.bukkit.block.data.type.WallSign) e.getBlock().getBlockData()).getFacing().getOppositeFace());
-            if (attachedBlock.getType() == Material.CHEST || attachedBlock.getType() == Material.TRAPPED_CHEST) {
-                BlockState state = attachedBlock.getState();
-
-                if (e.getLine(0).equalsIgnoreCase("[Shop]") && p.hasPermission("chestshop.create")){
                     List<String> WBlacklist = ChestShop.getPlugin(ChestShop.class).getBlackWorlds();
                     if (WBlacklist.contains(p.getWorld().getName())) {
                         lang.getMessage("FalseWorld");
@@ -69,66 +62,11 @@ public class SignListener implements Listener {
                                         int currentID = ChestShop.getPlugin(ChestShop.class).curentID();
                                         itemName = firstItem.getType().toString() + "#" + currentID;
                                     }
-                                } else {itemName = firstItem.getType().toString();}
-                                e.setLine(3, itemName);
-                                if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("")) {
-                                    Preis = String.valueOf(0);
-                                    e.setLine(1, "0");
-                                }
-                                ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
-                                p.sendMessage(lang.getMessage("ShopCreatewitch") + itemName + lang.getMessage("for") + Preis + lang.getMessage("sells"));
-                            } else {
-                                e.setLine(3, "Air");
-                                String itemName = "Air";
-                                if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("")) {
-                                    Preis = String.valueOf(0);
-                                    e.setLine(1, "0");
-                                }
-                                if (e.getLine(1) == null || e.getLine(1) == "") {
-                                    e.setLine(1, "0");
-                                }
-                                ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
-
-                                p.sendMessage(lang.getMessage("ShopCreate"));
-                            }
-                        }
-                    }
-                } else if (e.getLine(0).equalsIgnoreCase("[aShop]") && p.hasPermission("chestshop.admincreate")) {
-                    List<String> WBlacklist = ChestShop.getPlugin(ChestShop.class).getBlackWorlds();
-                    if (WBlacklist.contains(p.getWorld().getName())) {
-                        lang.getMessage("FalseWorld");
-                    } else {
-                        e.setLine(0, "§a[Adminshop]");
-                        String amount = e.getLine(2);
-                        if (e.getLine(2) == null || !e.getLine(2).matches("\\d+") || e.getLine(2) == "0") {
-                            e.setLine(2, "1");
-                        }
-                        Preis = e.getLine(1);
-                        int xCoord = e.getBlock().getLocation().getBlockX();
-                        int yCoord = e.getBlock().getLocation().getBlockY();
-                        int zCoord = e.getBlock().getLocation().getBlockZ();
-                        String uuid = String.valueOf(e.getPlayer().getUniqueId());
-                        //get first item
-                        if (state instanceof Chest) {
-                            Chest chest = (Chest) state;
-                            Inventory chestInventory = chest.getBlockInventory();
-                            ItemStack[] contents = chestInventory.getContents();
-
-                            if (contents.length > 0 && contents[0] != null) {
-                                ItemStack firstItem = contents[0];
-                                if (firstItem.hasItemMeta()) {
-                                    if (ChestShop.getPlugin(ChestShop.class).searchForItemStack(firstItem) != null) {
-                                        itemName = ChestShop.getPlugin(ChestShop.class).searchForItemStack(firstItem);
-                                    } else {
-                                        ChestShop.getPlugin(ChestShop.class).addcurrentnumber(firstItem);
-                                        int currentID = ChestShop.getPlugin(ChestShop.class).curentID();
-                                        itemName = firstItem.getType().toString() + "#" + currentID;
-                                    }
                                 } else {
                                     itemName = firstItem.getType().toString();
                                 }
                                 e.setLine(3, itemName);
-                                if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("") || !e.getLine(1).matches("\\d+")) {
+                                if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("")) {
                                     Preis = String.valueOf(0);
                                     e.setLine(1, "0");
                                 }
@@ -137,7 +75,7 @@ public class SignListener implements Listener {
                             } else {
                                 e.setLine(3, "Air");
                                 String itemName = "Air";
-                                if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("") || !e.getLine(1).matches("\\d+")) {
+                                if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("")) {
                                     Preis = String.valueOf(0);
                                     e.setLine(1, "0");
                                 }
@@ -152,8 +90,76 @@ public class SignListener implements Listener {
                     }
                 }
             }
+        } else if (e.getLine(0).equalsIgnoreCase("[aShop]") && p.hasPermission("chestshop.admincreate")) {
+            List<String> WBlacklist = ChestShop.getPlugin(ChestShop.class).getBlackWorlds();
+            BlockState state = null;
+            if (e.getBlock().getType().toString().endsWith("_WALL_SIGN")) {
+                Block attachedBlock = e.getBlock().getRelative(((org.bukkit.block.data.type.WallSign) e.getBlock().getBlockData()).getFacing().getOppositeFace());
+                state = attachedBlock.getState();
+            }
+
+            if (WBlacklist.contains(p.getWorld().getName())) {
+                lang.getMessage("FalseWorld");
+            } else {
+                e.setLine(0, "§a[Adminshop]");
+                String amount = e.getLine(2);
+                if (e.getLine(2) == null || !e.getLine(2).matches("\\d+") || e.getLine(2) == "0") {
+                    e.setLine(2, "1");
+                }
+                Preis = e.getLine(1);
+                int xCoord = e.getBlock().getLocation().getBlockX();
+                int yCoord = e.getBlock().getLocation().getBlockY();
+                int zCoord = e.getBlock().getLocation().getBlockZ();
+                String uuid = String.valueOf(e.getPlayer().getUniqueId());
+                //get first item
+
+                if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("") || !e.getLine(1).matches("\\d+")) {
+                    Preis = String.valueOf(0);
+                    e.setLine(1, "0");
+                }
+                if (state instanceof Chest) {
+                    Chest chest = (Chest) state;
+                    Inventory chestInventory = chest.getBlockInventory();
+                    ItemStack[] contents = chestInventory.getContents();
+
+                    if (contents.length > 0 && contents[0] != null) {
+                        ItemStack firstItem = contents[0];
+                        if (firstItem.hasItemMeta()) {
+                            if (ChestShop.getPlugin(ChestShop.class).searchForItemStack(firstItem) != null) {
+                                itemName = ChestShop.getPlugin(ChestShop.class).searchForItemStack(firstItem);
+                            } else {
+                                ChestShop.getPlugin(ChestShop.class).addcurrentnumber(firstItem);
+                                int currentID = ChestShop.getPlugin(ChestShop.class).curentID();
+                                itemName = firstItem.getType().toString() + "#" + currentID;
+                            }
+                        } else {
+                            itemName = firstItem.getType().toString();
+                        }
+                        e.setLine(3, itemName);
+                        ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
+                        p.sendMessage(lang.getMessage("ShopCreatewitch") + itemName + lang.getMessage("for") + Preis + lang.getMessage("sells"));
+                    } else {
+                        e.setLine(3, "Air");
+                        String itemName = "Air";
+                        ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
+
+                        p.sendMessage(lang.getMessage("ShopCreate"));
+                    }
+                } else if (e.getLine(3) == null || e.getLine(3).equalsIgnoreCase("")) {
+                    e.setLine(3, "Air");
+                    String itemName = "Air";
+                    ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
+
+                    p.sendMessage(lang.getMessage("ShopCreate"));
+
+                } else {
+                    itemName = e.getLine(3);
+                    ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
+                }
+            }
         }
     }
+
 
 
     @EventHandler

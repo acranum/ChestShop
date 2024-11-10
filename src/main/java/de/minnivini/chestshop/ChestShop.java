@@ -16,12 +16,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class ChestShop extends JavaPlugin {
 
@@ -55,14 +53,11 @@ public final class ChestShop extends JavaPlugin {
     }
 
     private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            return false;
-        }
+        if (getServer().getPluginManager().getPlugin("Vault") == null) return false;
 
         RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return false;
-        }
+        if (rsp == null) return false;
+
         econ = rsp.getProvider();
         return econ != null;
     }
@@ -83,17 +78,11 @@ public final class ChestShop extends JavaPlugin {
         }
         defaultConfig = this.getConfig();
     }
-
-    public void loadConfig() {
-        getConfig().options().copyDefaults(false);
-        saveConfig();
-    }
     public String getLanguage() {
         if (defaultConfig.contains("language")) {
             return defaultConfig.getString("language");
-        } else {
-            return "en";
         }
+        return "en";
     }
     public List<String> getBlackWorlds() {
         if (defaultConfig.contains("World_Blacklist")) {
@@ -125,7 +114,6 @@ public final class ChestShop extends JavaPlugin {
             saveDefaultShopConfig();
         }
     }
-
     private void saveShopConfig() {
         try {
             shopConfig.save(shopConfigFile);
@@ -208,7 +196,6 @@ public final class ChestShop extends JavaPlugin {
                 //erstellt Liste
                 if (item != null && item.equalsIgnoreCase(gesuchtesItem)) {
                     gefundenenKoordinaten.add(koordinaten);
-                    // Hier könntest du die Koordinaten weiter verarbeiten oder andere Aktionen ausführen
                 }
             }
         }

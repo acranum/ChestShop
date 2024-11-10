@@ -3,7 +3,6 @@ package de.minnivini.chestshop.GUIs;
 import de.minnivini.chestshop.ChestShop;
 import de.minnivini.chestshop.Util.ItemBuilder;
 import de.minnivini.chestshop.Util.lang;
-import de.minnivini.chestshop.Util.util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,14 +14,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class InfoGUI {
     public void InfoGUI(CommandSender commandSender) {
-        util util = new util();
-
         Player player = (Player) commandSender;
         int maxDiastance = 100;
         Block block = getTargetBlock(player, maxDiastance);
@@ -49,7 +42,7 @@ public class InfoGUI {
                         Inventory inv = Bukkit.createInventory(null, 9, "§bShop Info");
 
                         inv.setItem(2, itemStack);
-                        inv.setItem(6, new ItemBuilder(Material.PAPER).setDisplayname("§dInfos: ").setLore(ChatColor.WHITE + lang.getMessage("seller") + seller, ChatColor.WHITE + lang.getMessage("Prize") + Preis).build());
+                        inv.setItem(6, new ItemBuilder(Material.PAPER).setDisplayname("§dInfos: ").setLore(ChatColor.WHITE + lang.getMessage("seller") + seller, ChatColor.WHITE + lang.getMessage("Price") + Preis).build());
                         player.openInventory(inv);
                     }
                 } else player.sendMessage(lang.getMessage("noPermission"));
