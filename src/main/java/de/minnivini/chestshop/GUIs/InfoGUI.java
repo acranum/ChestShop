@@ -42,7 +42,7 @@ public class InfoGUI {
                         Inventory inv = Bukkit.createInventory(null, 9, "§bShop Info");
 
                         inv.setItem(2, itemStack);
-                        inv.setItem(6, new ItemBuilder(Material.PAPER).setDisplayname("§dInfos: ").setLore(ChatColor.WHITE + lang.getMessage("seller") + seller, ChatColor.WHITE + lang.getMessage("Price") + Preis).build());
+                        inv.setItem(6, new ItemBuilder(Material.PAPER).setDisplayname(ChatColor.BOLD + "§dInfos: ").setLore("§7" + lang.getMessage("seller") + seller, "§7" + lang.getMessage("Price") + Preis).build());
                         player.openInventory(inv);
                     }
                 } else player.sendMessage(lang.getMessage("noPermission"));

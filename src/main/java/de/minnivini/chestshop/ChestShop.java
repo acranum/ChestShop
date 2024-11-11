@@ -321,10 +321,9 @@ public final class ChestShop extends JavaPlugin {
                     Objects.requireNonNull(meta).addEnchant(Enchantment.getByName(enchantment), level, true);
                 }
             }*/
-            return item;
+        return item;
         //} else {
         //    getLogger().warning("Die 'item'-Kategorie ist in der Konfiguration nicht vorhanden.");
         //}
     }
 }
-

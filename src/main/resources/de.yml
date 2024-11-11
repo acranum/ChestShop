@@ -17,6 +17,7 @@
 "ErrorOccurred": "§4Es ist ein Fehler aufgetreten"
 "FalseWorld": "§4Du kannst in dieser Region keine Shops bauen!"
 "noShop": "§cKein Shop für das Item gefunden! "
+"noItem": "§cEs wurde kein Item zum verkaufen angegeben"
 
 #SuccessMessages
 "ShopCreatewitch": "§aDu hast erfolgreich einen Shop erstellt, welcher "
@@ -32,4 +33,4 @@
 "for": "§a für "
 "bought": "§a$ gekauft! ("
 "seller": "Verkäufer: "
-"Prize": "Preis: "
+"Price": "Preis: "

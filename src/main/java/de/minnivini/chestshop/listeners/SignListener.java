@@ -73,7 +73,7 @@ public class SignListener implements Listener {
                                 ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
                                 p.sendMessage(lang.getMessage("ShopCreatewitch") + itemName + lang.getMessage("for") + Preis + lang.getMessage("sells"));
                             } else {
-                                e.setLine(3, "Air");
+                                e.setLine(3, "?");
                                 String itemName = "Air";
                                 if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("")) {
                                     Preis = String.valueOf(0);
@@ -139,14 +139,14 @@ public class SignListener implements Listener {
                         ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
                         p.sendMessage(lang.getMessage("ShopCreatewitch") + itemName + lang.getMessage("for") + Preis + lang.getMessage("sells"));
                     } else {
-                        e.setLine(3, "Air");
+                        e.setLine(3, "?");
                         String itemName = "Air";
                         ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
 
                         p.sendMessage(lang.getMessage("ShopCreate"));
                     }
                 } else if (e.getLine(3) == null || e.getLine(3).equalsIgnoreCase("")) {
-                    e.setLine(3, "Air");
+                    e.setLine(3, "?");
                     String itemName = "Air";
                     ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
 
@@ -170,6 +170,37 @@ public class SignListener implements Listener {
         Block clickedBlock = e.getClickedBlock();
         if (clickedBlock != null && e.getClickedBlock().getState() instanceof Sign) {
             Sign sign = (Sign) e.getClickedBlock().getState();
+
+            if (sign.getLine(3).equalsIgnoreCase("?")) {
+                e.setCancelled(true);
+                if (sign.getLine(2).equalsIgnoreCase(player.getName()) || sign.getLine(2).equalsIgnoreCase("1")) {
+                    if (player.getInventory().getItemInMainHand() != null && !player.getInventory().getItemInMainHand().equals(Material.AIR)) {
+                        ItemStack item = player.getInventory().getItemInMainHand();
+                        if (item.hasItemMeta()) {
+                            if (ChestShop.getPlugin(ChestShop.class).searchForItemStack(item) != null) {
+                                itemName = ChestShop.getPlugin(ChestShop.class).searchForItemStack(item);
+                            } else {
+                                ChestShop.getPlugin(ChestShop.class).addcurrentnumber(item);
+                                int currentID = ChestShop.getPlugin(ChestShop.class).curentID();
+                                itemName = item.getType().toString() + "#" + currentID;
+                            }
+                        } else {
+                            itemName = item.getType().toString();
+                        }
+                        int xCoord = sign.getBlock().getLocation().getBlockX();
+                        int yCoord = sign.getBlock().getLocation().getBlockY();
+                        int zCoord = sign.getBlock().getLocation().getBlockZ();
+
+                        ChestShop.getPlugin(ChestShop.class).removeItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord);
+                        ChestShop.getPlugin(ChestShop.class).addItemToShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord, itemName, player);
+                        player.sendMessage(lang.getMessage("ShopCreatewitch") + itemName + lang.getMessage("for") + sign.getLine(1) + lang.getMessage("sells"));
+                        sign.setLine(3, itemName);
+                        sign.update();
+                    } else player.sendMessage(lang.getMessage("noItem"));
+                } else player.sendMessage(lang.getMessage("noItem"));
+                return;
+            }
+
             if (sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
                 e.setCancelled(true);
                 if (player.hasPermission("chestshop.buy")) {
@@ -177,7 +208,8 @@ public class SignListener implements Listener {
                     int yCoord = e.getClickedBlock().getLocation().getBlockY();
                     int zCoord = e.getClickedBlock().getLocation().getBlockZ();
 
-                    Double Preis = Double.valueOf(sign.getLine(1));
+                    String numbersOnly = sign.getLine(1).replaceAll("[^0-9]", "");
+                    Double Preis = Double.valueOf(numbersOnly);
 
                     Material material = Material.matchMaterial(ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord));
                     String material1 = "OHOH";
@@ -223,7 +255,8 @@ public class SignListener implements Listener {
                     int zCoord = e.getClickedBlock().getLocation().getBlockZ();
 
                     OfflinePlayer offlineplayer = Bukkit.getOfflinePlayer(sign.getLine(2));
-                    Double Preis = Double.valueOf(sign.getLine(1));
+                    String numbersOnly = sign.getLine(1).replaceAll("[^0-9]", "");
+                    Double Preis = Double.valueOf(numbersOnly);
 
                     Material material = Material.matchMaterial(ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord));
                     String material1 = "OHOH";
