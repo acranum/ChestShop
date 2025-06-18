@@ -3,3 +3,11 @@ language: en
 World_Blacklist:
 #- world_nether
 #- world_end
+
+Item_Blacklist:
+#- ENDER_DRAGON_SPAWN_EGG
+
+
+
+# prevents Hoppers and Hopper Minecrads from stealing items from shops
+Shop_hopper_protection: true

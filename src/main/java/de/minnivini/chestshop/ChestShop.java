@@ -96,6 +96,18 @@ public final class ChestShop extends JavaPlugin {
             return Collections.singletonList("example%example");
         }
     }
+    public List<String> getBlackItems() {
+        if (defaultConfig.contains("Item_Blacklist")) {
+            List<String> items = defaultConfig.getStringList("Item_Blacklist");
+
+            if (items == null) {
+                items.add("example%example");
+            }
+            return items;
+        }else {
+            return Collections.singletonList("example%example");
+        }
+    }
     /*public int getCooldown() {
         if (defaultConfig.contains("TP_cooldown")) {
             int Cooldown = defaultConfig.getInt("TP_cooldown");

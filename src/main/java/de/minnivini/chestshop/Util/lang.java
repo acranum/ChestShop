@@ -10,7 +10,7 @@ import java.nio.file.Files;
 
 public class lang {
     public static String getMessage(String message){
-        File languageFolder = new File(ChestShop.getPlugin(ChestShop.class).getDataFolder() + "/locales");
+        File languageFolder = new File(ChestShop.getPlugin(ChestShop.class).getDataFolder() + "/language");
         String language = ChestShop.getPlugin(ChestShop.class).getLanguage();
         File langFile = new File(languageFolder, language + ".yml");
         if (!langFile.exists()) {
@@ -20,7 +20,7 @@ public class lang {
         return langConfig.getString(message);
     }
     public static void createLanguageFolder() {
-        File langFolder = new File(ChestShop.getPlugin(ChestShop.class).getDataFolder() + "/locales");
+        File langFolder = new File(ChestShop.getPlugin(ChestShop.class).getDataFolder() + "/language");
         if (!langFolder.exists()) {
             langFolder.mkdir();
         }

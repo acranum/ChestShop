@@ -65,6 +65,10 @@ public class SignListener implements Listener {
                                 } else {
                                     itemName = firstItem.getType().toString();
                                 }
+                                if (!CheckBlackItems(itemName)) {
+                                    p.sendMessage(lang.getMessage("ItemBlacklist"));
+                                    itemName = "?";
+                                }
                                 e.setLine(3, itemName);
                                 if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("")) {
                                     Preis = String.valueOf(0);
@@ -176,6 +180,13 @@ public class SignListener implements Listener {
                 if (sign.getLine(2).equalsIgnoreCase(player.getName()) || sign.getLine(2).equalsIgnoreCase("1")) {
                     if (player.getInventory().getItemInMainHand() != null && !player.getInventory().getItemInMainHand().equals(Material.AIR)) {
                         ItemStack item = player.getInventory().getItemInMainHand();
+                        Material itemMat = item.getType();
+                        if (!CheckBlackItems(itemMat.toString())) {
+                            player.sendMessage(lang.getMessage("ItemBlacklist"));
+                            e.setCancelled(true);
+                            return;
+                        }
+                        System.out.println(item.toString());
                         if (item.hasItemMeta()) {
                             if (ChestShop.getPlugin(ChestShop.class).searchForItemStack(item) != null) {
                                 itemName = ChestShop.getPlugin(ChestShop.class).searchForItemStack(item);
@@ -274,6 +285,11 @@ public class SignListener implements Listener {
                         }
                     }
                     if (material != null && material != Material.AIR) {
+                        if (!CheckBlackItems(material.toString())) {
+                            player.sendMessage(lang.getMessage("ItemBlacklist"));
+                            e.setCancelled(true);
+                            return;
+                        }
                         Block chestBlock = clickedBlock.getRelative(((org.bukkit.block.data.type.WallSign) clickedBlock.getBlockData()).getFacing().getOppositeFace());
                         if (chestBlock.getState() instanceof Chest) {
                             Chest chest = (Chest) chestBlock.getState();
@@ -335,6 +351,15 @@ public class SignListener implements Listener {
     private String FormtItems(String item) {
         item.replace("_", " ");
         return item;
+    }
+    private boolean CheckBlackItems(String itemm) {
+        List<String> BlackItems = ChestShop.getPlugin(ChestShop.class).getBlackItems();
+        for (String item : BlackItems) {
+            Material blacklistedMaterial = Material.matchMaterial(item);
+            String blacklistedItem = blacklistedMaterial.toString();
+            if (itemm.equals(blacklistedItem)) return false;
+        }
+        return true;
     }
 
 

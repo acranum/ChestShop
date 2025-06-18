@@ -18,6 +18,7 @@
 "FalseWorld": "§4You cant build shops in this region"
 "noShop": "§cNo store found for the item! "
 "noItem": "§cThere is no item to buy"
+"ItemBlacklist": "§cThe item you want to sell isn't allowed to be sold on this server"
 
 #SuccessMessages
 "ShopCreatewitch": "§aYou successfully created a shop witch sells "
