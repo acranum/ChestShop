@@ -46,7 +46,12 @@ public class SignListener implements Listener {
                         int yCoord = e.getBlock().getLocation().getBlockY();
                         int zCoord = e.getBlock().getLocation().getBlockZ();
                         String uuid = String.valueOf(e.getPlayer().getUniqueId());
-                        //get first item
+
+                        Preis = e.getLine(1).replaceAll("[^0-9.]", "x");
+                        if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("") || !e.getLine(1).matches("\\d+") || Preis.contains("x")) {
+                            Preis = String.valueOf(0);
+                            e.setLine(1, "0");
+                        }
                         if (state instanceof Chest) {
                             Chest chest = (Chest) state;
                             Inventory chestInventory = chest.getBlockInventory();
@@ -117,7 +122,8 @@ public class SignListener implements Listener {
                 String uuid = String.valueOf(e.getPlayer().getUniqueId());
                 //get first item
 
-                if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("") || !e.getLine(1).matches("\\d+")) {
+                Preis = e.getLine(1).replaceAll("[^0-9.]", "x");
+                if (e.getLine(1) == null || e.getLine(1).equalsIgnoreCase("") || !e.getLine(1).matches("\\d+") || Preis.contains("x")) {
                     Preis = String.valueOf(0);
                     e.setLine(1, "0");
                 }
@@ -181,6 +187,7 @@ public class SignListener implements Listener {
                     if (player.getInventory().getItemInMainHand() != null && !player.getInventory().getItemInMainHand().equals(Material.AIR)) {
                         ItemStack item = player.getInventory().getItemInMainHand();
                         Material itemMat = item.getType();
+                        System.out.println(itemMat);
                         if (!CheckBlackItems(itemMat.toString())) {
                             player.sendMessage(lang.getMessage("ItemBlacklist"));
                             e.setCancelled(true);
@@ -219,7 +226,8 @@ public class SignListener implements Listener {
                     int yCoord = e.getClickedBlock().getLocation().getBlockY();
                     int zCoord = e.getClickedBlock().getLocation().getBlockZ();
 
-                    String numbersOnly = sign.getLine(1).replaceAll("[^0-9]", "");
+                    String numbersOnly = sign.getLine(1).replaceAll("[^0-9.]", "x");
+                    if (numbersOnly.contains("x")) numbersOnly = "0";
                     Double Preis = Double.valueOf(numbersOnly);
 
                     Material material = Material.matchMaterial(ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord));
@@ -245,7 +253,7 @@ public class SignListener implements Listener {
                         if (economy.getBalance(player) >= Preis) { // Überprüfung auf ausreichendes Geld
                             economy.withdrawPlayer(player, Preis);
                             player.getInventory().addItem(item);
-                            player.sendMessage(lang.getMessage("youHave") + amount + " " + sign.getLine(3) + lang.getMessage("for") + Preis + lang.getMessage("bought") + "Adminshop)");
+                            player.sendMessage(lang.getMessage("youHave") + lang.getMessage("bought") + amount + " " + sign.getLine(3) + lang.getMessage("for") + Preis + "Adminshop)");
                         } else {
                             player.sendMessage(lang.getMessage("notEnoughMoney"));
                         }
@@ -266,7 +274,8 @@ public class SignListener implements Listener {
                     int zCoord = e.getClickedBlock().getLocation().getBlockZ();
 
                     OfflinePlayer offlineplayer = Bukkit.getOfflinePlayer(sign.getLine(2));
-                    String numbersOnly = sign.getLine(1).replaceAll("[^0-9]", "");
+                    String numbersOnly = sign.getLine(1).replaceAll("[^0-9.]", "x");
+                    if (numbersOnly.contains("x")) numbersOnly = "0";
                     Double Preis = Double.valueOf(numbersOnly);
 
                     Material material = Material.matchMaterial(ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord));
@@ -311,7 +320,7 @@ public class SignListener implements Listener {
                                     //offlineplayer.getPlayer().sendMessage(player + lang.getMessage("hasbought" + sign.getLine(3)));
                                     chestInventory.removeItem(item);
                                     player.getInventory().addItem(item);
-                                    player.sendMessage(lang.getMessage("youHave") + amount + " " + sign.getLine(3) + lang.getMessage("for") + Preis + lang.getMessage("bought") + (count - amount) + ")");
+                                    player.sendMessage(lang.getMessage("youHave") + lang.getMessage("bought") + amount + " " + sign.getLine(3) + lang.getMessage("for") + Preis + (count - amount) + ")");
                                 } else {
                                     player.sendMessage(lang.getMessage("notEnoughMoney"));
                                 }

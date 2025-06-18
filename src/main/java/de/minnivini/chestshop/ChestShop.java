@@ -26,7 +26,7 @@ public final class ChestShop extends JavaPlugin {
     private static Economy econ = null;
     private FileConfiguration shopConfig;
     private File shopConfigFile;
-    private FileConfiguration ItemConfig;
+    public FileConfiguration ItemConfig;
     private File ItemConfigFile;
     public FileConfiguration defaultConfig;
 
@@ -162,6 +162,7 @@ public final class ChestShop extends JavaPlugin {
         saveResource("items.yml", false);
     }
 
+
     //-------------------------------------------------Shop Methoden
     public void addItemToShopConfig(String world, int xCoord, int yCoord, int zCoord, String item, Player p) {
         String key = world + "§" + xCoord + "§" + yCoord + "§" + zCoord;
@@ -296,7 +297,7 @@ public final class ChestShop extends JavaPlugin {
             ConfigurationSection itemSection = ItemConfig.getConfigurationSection(id);
             //String type = itemSection.getString("type");
 
-            ItemStack item = new ItemStack(Material.DIRT);
+            ItemStack item = new ItemStack(Material.AIR);
 
             item = itemSection.getItemStack("ItemStack");
             ItemMeta meta = item.getItemMeta();
