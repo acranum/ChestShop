@@ -3,6 +3,7 @@ package de.minnivini.chestshop.GUIs;
 import de.minnivini.chestshop.Util.ItemBuilder;
 
 import de.minnivini.chestshop.ChestShop;
+import de.minnivini.chestshop.Util.lang;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -16,7 +17,7 @@ public class ShopSearchGUI {
     public void ShopSearch(Player p, List<String> shops, String material) {
         Inventory inventory;
         ItemStack Black_glass = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build();
-        ItemStack Red_glass = new ItemBuilder(Material.RED_STAINED_GLASS_PANE).build();
+        ItemStack Red_glass = new ItemBuilder(Material.RED_STAINED_GLASS_PANE).setDisplayname(lang.getMessage("noShopAvailable")).build();
         inventory = Bukkit.createInventory(null, 27, "§bShop Search");
 
         inventory.setItem(0, Black_glass);

@@ -1,8 +1,7 @@
 package de.minnivini.chestshop;
 
 import de.minnivini.chestshop.Util.lang;
-import de.minnivini.chestshop.commands.csCommand;
-import de.minnivini.chestshop.commands.tabCompleter;
+import de.minnivini.chestshop.commands.ChestShopCMD;
 import de.minnivini.chestshop.listeners.BlockBreak;
 import de.minnivini.chestshop.listeners.InvListener;
 import de.minnivini.chestshop.listeners.SignListener;
@@ -49,8 +48,7 @@ public final class ChestShop extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        getCommand("chestshop").setTabCompleter(new tabCompleter());
-        getCommand("chestshop").setExecutor(new csCommand());
+        getCommand("chestshop").setExecutor(new ChestShopCMD());
     }
 
     private boolean setupEconomy() {
@@ -199,7 +197,7 @@ public final class ChestShop extends JavaPlugin {
             getLogger().warning(lang.getMessage("noShoptoRem") + key);
         }
     }
-    public List<String> searchItemFromShopCongig(String gesuchtesItem) {
+    public List<String> searchItemFromShopConfig(String gesuchtesItem) {
         ConfigurationSection shops = shopConfig.getConfigurationSection("shops");
         List<String> gefundenenKoordinaten = new ArrayList<>();
         List<String> realKoordinaten = new ArrayList<>();

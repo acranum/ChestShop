@@ -22,11 +22,14 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class SignListener implements Listener {
     public String itemName;
     util util = new util();
     boolean mBuying = false;
+    private final Map<UUID, Long> clickCooldown = new HashMap<>();
 
     @EventHandler
     public void onSignChange(SignChangeEvent e) {
@@ -165,10 +168,21 @@ public class SignListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         int count = 0;
         Player player = e.getPlayer();
-        if (!(e.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
+        UUID uuid = player.getUniqueId();
+
         Block clickedBlock = e.getClickedBlock();
         if (clickedBlock != null && e.getClickedBlock().getState() instanceof Sign) {
             Sign sign = (Sign) e.getClickedBlock().getState();
+
+            long now = System.currentTimeMillis();
+            if (clickCooldown.containsKey(uuid) && now - clickCooldown.get(uuid) < 50) { //Double click prevention
+                e.setCancelled(true);
+                return;
+            }
+            if (clickCooldown.containsKey(uuid) && now - clickCooldown.get(uuid) < 300) { //Double click --> edit
+                if (player.getName().equals(sign.getLine(2))) return;
+            }
+            clickCooldown.put(uuid, now);
 
             if (sign.getLine(3).equalsIgnoreCase("?")) {
                 e.setCancelled(true);
@@ -207,6 +221,7 @@ public class SignListener implements Listener {
             }
 
             if (sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
+                if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
                 e.setCancelled(true);
                 if (player.hasPermission("chestshop.buy")) {
                     int xCoord = e.getClickedBlock().getLocation().getBlockX();
@@ -236,7 +251,7 @@ public class SignListener implements Listener {
                         if (player.isSneaking()) {
                             Preis = (Preis / amount)*item.getMaxStackSize();
                             amount = item.getMaxStackSize();
-                            item.setAmount(item.getMaxStackSize());
+                            item.setAmount(amount);
                         }
                         Economy economy = ChestShop.getEconomy();
 
@@ -385,15 +400,15 @@ public class SignListener implements Listener {
         Preis = price.replaceAll("[^0-9.bB ]", "x");
         if (price == null || price.equalsIgnoreCase("") || Preis.contains("x")) {
             Preis = String.valueOf(0);
-            return "0";
+            return "0" + lang.getMessage("$");
         }
         Preis = Preis.replaceAll("[ ]", "");
         if (Preis.toLowerCase().contains("b")) {
             Preis = Preis.replaceAll("[bB]", "");
             Preis.replace(" (Buying)", "");
-            return Preis + " (Buying)";
+            return Preis + lang.getMessage("$") + "(Buying)";
         }
-        return Preis;
+        return Preis + lang.getMessage("$");
     }
     private boolean isBuying(String price) {
         if (price.contains(" (Buying)")) {
