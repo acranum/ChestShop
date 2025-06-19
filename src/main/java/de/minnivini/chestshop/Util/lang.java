@@ -48,7 +48,7 @@ public class lang {
         try {
             if (!frFile.exists()) {
                 InputStream in = ChestShop.getPlugin(ChestShop.class).getResource("fr.yml");
-                Files.copy(in, deFile.toPath());
+                Files.copy(in, frFile.toPath());
             }
         } catch (IOException e) {
             e.printStackTrace();
