@@ -359,10 +359,7 @@ public class SignListener implements Listener {
         int count = 0;
         for (ItemStack stack : inventory.getContents()) {
             if (stack != null && stack.getType() == mat) {
-                System.out.println(stack.getItemMeta());
-                System.out.println(item.getItemMeta());
                 if (stack.getItemMeta().equals(item.getItemMeta())) {
-                    System.out.println("test");
                     count += stack.getAmount();
                 }
             }
