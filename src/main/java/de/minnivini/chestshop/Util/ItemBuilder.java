@@ -2,6 +2,7 @@ package de.minnivini.chestshop.Util;
 
 //itemBuilder von CoolePizza --> https://github.com/CoolePizza/snippets
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,6 +30,11 @@ public class ItemBuilder {
     }
     public ItemBuilder setUnbreakable(boolean s){
         itemMeta.setUnbreakable(s);
+        return this;
+    }
+    public ItemBuilder setGlow() {
+        itemMeta.addEnchant(Enchantment.ARROW_INFINITE, 1, true);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         return this;
     }
     public ItemBuilder addItemFlags(ItemFlag... s){

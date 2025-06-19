@@ -35,6 +35,7 @@ public final class ChestShop extends JavaPlugin {
     public void onEnable() {
         setupConfig();
         lang.createLanguageFolder();
+        lang.checkLanguageUpdates();
         getServer().getPluginManager().registerEvents(new SignListener(), this);
         getServer().getPluginManager().registerEvents(new InvListener(), this);
         getServer().getPluginManager().registerEvents(new BlockBreak(), this);

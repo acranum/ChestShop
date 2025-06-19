@@ -18,9 +18,11 @@ public class InvListener implements Listener {
                 if (e.getCurrentItem().getItemMeta().hasLocalizedName()) {
                     switch (e.getCurrentItem().getItemMeta().getLocalizedName()) {
                         case "shopTP":
-                            String koords = e.getCurrentItem().getItemMeta().getDisplayName();
-                            String world = String.valueOf(e.getCurrentItem().getItemMeta().getLore());
-                            String formatetWorld = world.substring(1, world.length() - 1);
+                            String koords = e.getCurrentItem().getItemMeta().getLore().toString().replace(", §7world", "").replace("§7", "");
+                            koords = koords.replaceAll("[\\[\\]]", "");
+                            String world = String.valueOf(e.getCurrentItem().getItemMeta().getLore().get(1));
+                            String formatetWorld = world.substring(2);
+
                             String[] parts = koords.split(" ");
                             Double x = null;
                             Double y = null;
@@ -42,7 +44,7 @@ public class InvListener implements Listener {
                             break;
                     }
                 }
-            } else if (e.getView().getTitle().equals("§bShop Info")) {
+            } else if (e.getView().getTitle().equals("§3Shop Info")) {
                 e.setCancelled(true);
             }
         }

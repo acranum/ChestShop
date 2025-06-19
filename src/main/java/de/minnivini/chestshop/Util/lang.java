@@ -6,6 +6,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class lang {
@@ -14,7 +16,7 @@ public class lang {
         String language = ChestShop.getPlugin(ChestShop.class).getLanguage();
         File langFile = new File(languageFolder, language + ".yml");
         if (!langFile.exists()) {
-            return null;
+            return "Check your language files!";
         }
         YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(langFile);
         return langConfig.getString(message);
@@ -42,6 +44,27 @@ public class lang {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public static void checkLanguageUpdates() {
+        File langFolder = new File(ChestShop.getPlugin(ChestShop.class).getDataFolder() + "/language");
+        File enFile = new File(langFolder, "en.yml");
+        File deFile = new File(langFolder, "de.yml");
+
+        InputStream in = ChestShop.getPlugin(ChestShop.class).getResource("en.yml");
+        InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
+        YamlConfiguration internalConfig = YamlConfiguration.loadConfiguration(reader);
+
+        if (enFile.exists() ) {
+            YamlConfiguration langConfig = YamlConfiguration.loadConfiguration(enFile);
+
+            if (langConfig.getString("version") == null || langConfig.getDouble("version") < internalConfig.getDouble("version")) {
+                enFile.delete();
+                deFile.delete();
+                createLanguageFolder();
+
+            }
+        }
+
     }
 
 }

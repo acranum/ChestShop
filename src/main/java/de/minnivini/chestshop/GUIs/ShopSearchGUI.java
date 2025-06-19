@@ -59,9 +59,9 @@ public class ShopSearchGUI {
             Koordinaten = Koordinaten.replace("§", " ");
             if (ChestShop.getPlugin(ChestShop.class).IDCheck(material) != null) {
                 ItemStack item = ChestShop.getPlugin(ChestShop.class).getNBT(material);
-                inventory.setItem(i + 10, new ItemBuilder(item.getType()).setDisplayname(ChatColor.RESET + x + " " + y + " " + z).setLocalizedName("shopTP").setLore(world).build());
+                inventory.setItem(i + 10, new ItemBuilder(item.getType()).setDisplayname("Shop").setLocalizedName("shopTP").setLore(ChatColor.GRAY + x + " " + y + " " + z, ChatColor.GRAY + world).build());
             } else {
-                inventory.setItem(i + 10, new ItemBuilder(Material.valueOf(material)).setDisplayname(ChatColor.RESET + x + " " + y + " " + z).setLocalizedName("shopTP").setLore(world).build());
+                inventory.setItem(i + 10, new ItemBuilder(Material.valueOf(material)).setDisplayname("Shop").setLocalizedName("shopTP").setLore(ChatColor.GRAY + x + " " + y + " " + z, ChatColor.GRAY + world).build());
             }
         }
         p.openInventory(inventory);

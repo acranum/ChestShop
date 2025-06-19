@@ -6,10 +6,12 @@ import de.minnivini.chestshop.Util.lang;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
@@ -29,7 +31,6 @@ public class InfoGUI {
                     ItemStack itemStack = new ItemStack(new ItemBuilder(Material.DIRT).build());
                     String seller = ((Sign) block.getState()).getLine(2);
                     String Preis = ((Sign) block.getState()).getLine(1);
-
                     if (item.equals("Air")) {
                         player.sendMessage(lang.getMessage("invalidMaterial"));
                     } else {
@@ -38,12 +39,18 @@ public class InfoGUI {
                         } else {
                             itemStack.setType(Material.valueOf(item));
                         }
+                        Inventory inv = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.BOLD + "§3Shop Info");
 
-                        Inventory inv = Bukkit.createInventory(null, 9, "§bShop Info");
+                        //glass
+                        ItemStack blackglass = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).build();
+                        inv.setItem(0, blackglass);
+                        inv.setItem(2, blackglass);
+                        inv.setItem(4, blackglass);
 
-                        inv.setItem(2, itemStack);
-                        inv.setItem(6, new ItemBuilder(Material.PAPER).setDisplayname(ChatColor.BOLD + "§dInfos: ").setLore("§7" + lang.getMessage("seller") + seller, "§7" + lang.getMessage("Price") + Preis).build());
+                        inv.setItem(1, itemStack);
+                        inv.setItem(3, new ItemBuilder(Material.PAPER).setDisplayname(ChatColor.BOLD + "§fInfo: ").setGlow().setLore("§7" + lang.getMessage("seller").replace("<seller>", seller), "§7" + lang.getMessage("price").replace("<price>", Preis)).build());
                         player.openInventory(inv);
+                        if (!Bukkit.getOfflinePlayer(seller).hasPlayedBefore()) inv.setItem(3, new ItemBuilder(Material.PAPER).setDisplayname(ChatColor.BOLD + "§fInfos: ").setGlow().setLore("§7" + lang.getMessage("seller").replace("<seller>", "§a[AdminShop]"), "§7" + lang.getMessage("price").replace("<price>", Preis)).build());
                     }
                 } else player.sendMessage(lang.getMessage("noPermission"));
             } else player.sendMessage(lang.getMessage("lookatSign"));
