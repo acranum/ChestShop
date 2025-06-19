@@ -28,6 +28,7 @@ public class lang {
         }
         File enFile = new File(langFolder, "en.yml");
         File deFile = new File(langFolder, "de.yml");
+        File frFile = new File(langFolder, "fr.yml");
         try {
             if (!enFile.exists()) {
                 InputStream in = ChestShop.getPlugin(ChestShop.class).getResource("en.yml");
@@ -44,11 +45,20 @@ public class lang {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        try {
+            if (!frFile.exists()) {
+                InputStream in = ChestShop.getPlugin(ChestShop.class).getResource("fr.yml");
+                Files.copy(in, deFile.toPath());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public static void checkLanguageUpdates() {
         File langFolder = new File(ChestShop.getPlugin(ChestShop.class).getDataFolder() + "/language");
         File enFile = new File(langFolder, "en.yml");
         File deFile = new File(langFolder, "de.yml");
+        File frFile = new File(langFolder, "fr.yml");
 
         InputStream in = ChestShop.getPlugin(ChestShop.class).getResource("en.yml");
         InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
@@ -60,6 +70,7 @@ public class lang {
             if (langConfig.getString("version") == null || langConfig.getDouble("version") < internalConfig.getDouble("version")) {
                 enFile.delete();
                 deFile.delete();
+                frFile.delete();
                 createLanguageFolder();
 
             }
