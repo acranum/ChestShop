@@ -55,7 +55,20 @@ public class BlockBreak implements Listener {
                 if (currentBlock.getState() instanceof Sign) {
                     Sign sign = (Sign) currentBlock.getState();
                     if (sign.getLine(0).equalsIgnoreCase("§a[Shop]") || sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
-
+                        //checks if destroyed block is the attachment of sign
+                        if (sign.getLine(0).equalsIgnoreCase("§a[Shop]")) {
+                            if (!(e.getBlock().getState() instanceof Chest)) return;
+                            Block attachedBlock = currentBlock.getRelative(((org.bukkit.block.data.type.WallSign) currentBlock.getBlockData()).getFacing().getOppositeFace());
+                            if (!(attachedBlock.equals(e.getBlock()))) return;
+                        } else if (sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
+                            System.out.println(currentBlock.getType().toString());
+                            if (currentBlock.getType().toString().endsWith("_WALL_SIGN")) {
+                                Block attachedBlock = currentBlock.getRelative(((org.bukkit.block.data.type.WallSign) currentBlock.getBlockData()).getFacing().getOppositeFace());
+                                if (!(attachedBlock.equals(e.getBlock()))) return;
+                            } else if (currentBlock.getType().toString().endsWith("_HANGING_SIGN")) {
+                                return; //TODO: Hanging sign attached block
+                            }
+                        }
                         int xCoord = currentLocation.getBlockX();
                         int yCoord = currentLocation.getBlockY();
                         int zCoord = currentLocation.getBlockZ();
@@ -99,9 +112,8 @@ public class BlockBreak implements Listener {
                         int zCoord = currentLocation.getBlockZ();
                         String world = currentLocation.getWorld().getName();
                         if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(world, xCoord, yCoord, zCoord) != null) {
-                            if (!p.hasPermission("chestshop.interact")) {
-                                if (!sign.getLine(2).equals(p.getName())) e.setCancelled(true);
-                            }
+                            if (p.hasPermission("chestshop.interact")) return;
+                            if (!sign.getLine(2).equals(p.getName())) e.setCancelled(true);
                         }
                     } else if (sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
                         if (!p.hasPermission("chestshop.interact") || !p.hasPermission("chestshop.admincreate")) {

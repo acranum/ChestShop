@@ -7,6 +7,7 @@ import de.minnivini.chestshop.listeners.InvListener;
 import de.minnivini.chestshop.listeners.SignListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -289,6 +290,19 @@ public final class ChestShop extends JavaPlugin {
             }
         }
         return null;
+    }
+    public List<String> AllSpecialItems() {
+        List<String> Items = new ArrayList<>();
+        for (String key : ItemConfig.getKeys(false)) {
+            if (!(key == "current_id")) {
+                Items.add(key);
+            }
+        }
+        return Items;
+    }
+    public NamespacedKey getNamespacedKey() {
+        NamespacedKey namespacedKey = new NamespacedKey(ChestShop.getPlugin(ChestShop.class), "chestshop");
+        return namespacedKey;
     }
 
     public ItemStack getNBT(String id) {

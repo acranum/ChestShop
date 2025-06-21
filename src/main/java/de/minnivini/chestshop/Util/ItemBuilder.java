@@ -1,11 +1,13 @@
 package de.minnivini.chestshop.Util;
 
 //itemBuilder von CoolePizza --> https://github.com/CoolePizza/snippets
+import de.minnivini.chestshop.ChestShop;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Arrays;
 
@@ -21,7 +23,7 @@ public class ItemBuilder {
         return this;
     }
     public ItemBuilder setLocalizedName(String s){
-        itemMeta.setLocalizedName(s);
+        itemMeta.getPersistentDataContainer().set(ChestShop.getPlugin(ChestShop.class).getNamespacedKey(), PersistentDataType.STRING, s);
         return this;
     }
     public ItemBuilder setLore(String... s){

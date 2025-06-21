@@ -59,6 +59,10 @@ public class ChestShopCMD implements CommandExecutor, TabExecutor {
             for (Material mat : Material.values()) {
                 list.add(mat.toString().toLowerCase());
             }
+            List<String> spcialItems = ChestShop.getPlugin(ChestShop.class).AllSpecialItems();
+            for (String str : spcialItems) {
+                list.add(str.toLowerCase());
+            }
             StringUtil.copyPartialMatches(args[1], list, valdArguments);
             return valdArguments;
         }

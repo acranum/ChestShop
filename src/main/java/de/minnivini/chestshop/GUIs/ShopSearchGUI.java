@@ -62,7 +62,7 @@ public class ShopSearchGUI {
                 ItemStack item = ChestShop.getPlugin(ChestShop.class).getNBT(material);
                 inventory.setItem(i + 10, new ItemBuilder(item.getType()).setDisplayname("Shop").setLocalizedName("shopTP").setLore(ChatColor.GRAY + x + " " + y + " " + z, ChatColor.GRAY + world).build());
             } else {
-                inventory.setItem(i + 10, new ItemBuilder(Material.valueOf(material)).setDisplayname("Shop").setLocalizedName("shopTP").setLore(ChatColor.GRAY + x + " " + y + " " + z, ChatColor.GRAY + world).build());
+                inventory.setItem(i + 10, new ItemBuilder(Material.valueOf(material)).setDisplayname("Shop").setLore(ChatColor.GRAY + x + " " + y + " " + z, ChatColor.GRAY + world).setLocalizedName("shopTP").build());
             }
         }
         p.openInventory(inventory);

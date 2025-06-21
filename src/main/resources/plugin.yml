@@ -15,6 +15,9 @@ permissions:
   chestshop.buy:
     description: Allows players to buy items from shops
     default: true
+  chestshop.sell:
+    description: Allows players to sell items from shops
+    default: true
   chestshop.break:
     description: Allows players to break shops
     default: true
@@ -25,5 +28,5 @@ permissions:
     description: Allows Players to create admin Shops
     default: op
   chestshop.interact:
-    description: Alloes Players to interact with chest from other players shops
+    description: Allows Players to interact with chests from other players shops
     default: op
