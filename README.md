@@ -31,6 +31,7 @@ chestshop.shopinfo
 chestshop.create
 chestshop.search
 chestshop.buy
+chestshop.sell
 chestshop.break
 chestshop.admincreate
 chestshop.tp
