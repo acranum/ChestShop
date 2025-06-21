@@ -1,7 +1,7 @@
 name: ChestShop
 version: '${project.version}'
 main: de.minnivini.chestshop.ChestShop
-api-version: '1.20'
+api-version: '1.21'
 commands:
   chestshop:
     description: Zeigt infos über den Shop

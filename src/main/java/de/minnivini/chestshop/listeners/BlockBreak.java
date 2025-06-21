@@ -79,6 +79,7 @@ public class BlockBreak implements Listener {
     @EventHandler
     public void ChestInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
+        if (e.getClickedBlock() == null) return;
         if (e.getClickedBlock().getType() == Material.CHEST || e.getClickedBlock().getType() == Material.TRAPPED_CHEST) {
             int[][] directions = {{0, 0, 1}, {0, 0, -1}, {1, 0, 0}, {-1, 0, 0}};
             Location chestLocation = e.getClickedBlock().getLocation();

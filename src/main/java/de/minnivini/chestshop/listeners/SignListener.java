@@ -174,8 +174,9 @@ public class SignListener implements Listener {
         if (clickedBlock != null && e.getClickedBlock().getState() instanceof Sign) {
             Sign sign = (Sign) e.getClickedBlock().getState();
 
+            if(!(e.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
             long now = System.currentTimeMillis();
-            if (clickCooldown.containsKey(uuid) && now - clickCooldown.get(uuid) < 50) { //Double click prevention
+            if (clickCooldown.containsKey(uuid) && now - clickCooldown.get(uuid) < 50) { //Double click prevention //permission: chestshop.edit
                 e.setCancelled(true);
                 return;
             }
@@ -221,8 +222,8 @@ public class SignListener implements Listener {
             }
 
             if (sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
-                if (e.getAction() != Action.RIGHT_CLICK_BLOCK) return;
                 e.setCancelled(true);
+                boolean idMat = false;
                 if (player.hasPermission("chestshop.buy")) {
                     int xCoord = e.getClickedBlock().getLocation().getBlockX();
                     int yCoord = e.getClickedBlock().getLocation().getBlockY();
@@ -236,10 +237,10 @@ public class SignListener implements Listener {
                         String Realmaterial = ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord);
                         if (ChestShop.getPlugin(ChestShop.class).IDCheck(Realmaterial) != null) {
                             material1 = Realmaterial;
-                            material = Material.DIRT;
+                            idMat = true;
                         }
                     }
-                    if (material != null && material != Material.AIR) {
+                    if (material != null && material != Material.AIR || idMat) {
                         ItemStack item;
                         if (ChestShop.getPlugin(ChestShop.class).IDCheck(material1) != null) {
                             item = ChestShop.getPlugin(ChestShop.class).getNBT(material1);
@@ -265,6 +266,10 @@ public class SignListener implements Listener {
                                 } else player.sendMessage(lang.getMessage("notEngouthItems"));
                             } else player.sendMessage(lang.getMessage("notEngouthItems"));
                         } else {
+                            if (inventoryfull(player.getInventory())) {
+                                player.sendTitle(lang.getMessage("inventoryFull"), "");
+                                return;
+                            }
                             if (economy.getBalance(player) >= Preis) { // Überprüfung auf ausreichendes Geld
                                 economy.withdrawPlayer(player, Preis);
                                 player.getInventory().addItem(item);
@@ -339,6 +344,10 @@ public class SignListener implements Listener {
                                     } else player.sendMessage(lang.getMessage("notEngouthItems"));
                                 } else player.sendMessage(lang.getMessage("BuyerNotEnoughMoney"));
                             } else {
+                                if (inventoryfull(player.getInventory())) {
+                                    player.sendTitle(lang.getMessage("inventoryFull"), "");
+                                    return;
+                                }
                                 count = countSpecalItems(chestInventory, item);
                                 if (count >= amount) { // Überprüfung, ob mindestens ein Artikel vorhanden ist
                                     if (economy.getBalance(player) >= Preis) { // Überprüfung auf ausreichendes Geld
@@ -397,7 +406,8 @@ public class SignListener implements Listener {
 
     private String setPrice(String price) {
         String Preis;
-        Preis = price.replaceAll("[^0-9.bB ]", "x");
+        Preis = price.replaceAll("[$]", "");
+        Preis = Preis.replaceAll("[^0-9.bB ]", "x");
         if (price == null || price.equalsIgnoreCase("") || Preis.contains("x")) {
             Preis = String.valueOf(0);
             return "0" + lang.getMessage("$");
@@ -430,6 +440,10 @@ public class SignListener implements Listener {
     private boolean isNotFull(Chest chest, ItemStack item) {
         HashMap<Integer, ItemStack> rest = chest.getInventory().addItem(item);
         return rest.isEmpty();
+    }
+    private boolean inventoryfull(Inventory inv) {
+        if (inv.firstEmpty() == -1) return true;
+        return false;
     }
     private int getItemSlot(Inventory inv, Material mat) {
         int amount = 0;

@@ -25,6 +25,7 @@ version: 1.01
 "notEngouthItems": "§cYou don’t have enough items in your inventory"
 "notEngouthItemsChest": "§cThere are not enough <item>s in the shop"
 "noShopAvailable": "No shop available"
+"inventoryFull": "§4Inventory full!"
 
 #SuccessMessages
 "ShopCreateSells": "§aYou successfully created a shop that sells <item>s for <price>"
