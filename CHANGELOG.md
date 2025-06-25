@@ -2,10 +2,22 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [1.4.1] - 2025-06-22
+## [1.4.2] - 2025-06-25
 
-Here we write upgrading notes for brands. It's a team effort to make them as
-straightforward as possible.
+### Added
+- [Discord](https://discord.com/channels/1385269992265875577/1386753724390707574)
+  Permission: max amount of shops per player
+- Autoupdating configs
+- /shopinfo instead of /chestshop info command 
+
+### Changed
+- Changes in internal file structure
+
+### Fixed
+- [Discord](https://discord.com/channels/1385269992265875577/1387201627534135338/1387201923148415058)
+Adminshop buy not working
+
+## [1.4.1] - 2025-06-22
 
 ### Added
 - [Github](https://github.com/acranum/ChestShop/commit/d82c3163b9731cfe2d30891aa3d666effba08508)

@@ -14,6 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class ShopSearchGUI {
+
+    ChestShop plugin = ChestShop.getPlugin(ChestShop.class);
+
     public void ShopSearch(Player p, List<String> shops, String material) {
         Inventory inventory;
         ItemStack Black_glass = new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).build();
@@ -58,8 +61,8 @@ public class ShopSearchGUI {
             String y = teile[2];
             String z = teile[3];
             Koordinaten = Koordinaten.replace("§", " ");
-            if (ChestShop.getPlugin(ChestShop.class).IDCheck(material) != null) {
-                ItemStack item = ChestShop.getPlugin(ChestShop.class).getNBT(material);
+            if (plugin.getItemconfig().IDCheck(material) != null) {
+                ItemStack item = plugin.getItemconfig().getNBT(material);
                 inventory.setItem(i + 10, new ItemBuilder(item.getType()).setDisplayname("Shop").setLocalizedName("shopTP").setLore(ChatColor.GRAY + x + " " + y + " " + z, ChatColor.GRAY + world).build());
             } else {
                 inventory.setItem(i + 10, new ItemBuilder(Material.valueOf(material)).setDisplayname("Shop").setLore(ChatColor.GRAY + x + " " + y + " " + z, ChatColor.GRAY + world).setLocalizedName("shopTP").build());

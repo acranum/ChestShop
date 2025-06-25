@@ -8,10 +8,13 @@ import org.bukkit.Material;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
 
 public class ChestShopCMD implements CommandExecutor, TabExecutor {
+
+    ChestShop plugin = ChestShop.getPlugin(ChestShop.class);
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
@@ -39,7 +42,7 @@ public class ChestShopCMD implements CommandExecutor, TabExecutor {
 
     private void search(String mat, Player p) {
         if (mat != null) {
-            List<String> shops = ChestShop.getPlugin(ChestShop.class).searchItemFromShopConfig(mat);
+            List<String> shops = plugin.getShopconfig().searchItemFromShopConfig(mat);
             if (shops == null) {
                 shops = new ArrayList<>();
             }
@@ -54,12 +57,12 @@ public class ChestShopCMD implements CommandExecutor, TabExecutor {
             StringUtil.copyPartialMatches(args[0], Arrays.asList("info", "search"), valdArguments);
             return valdArguments;
         }
-        if (args.length == 2) {
+        if (args.length == 2 && args[0].toString().equals("search")) {
             ArrayList<String> list = new ArrayList<>();
             for (Material mat : Material.values()) {
                 list.add(mat.toString().toLowerCase());
             }
-            List<String> spcialItems = ChestShop.getPlugin(ChestShop.class).AllSpecialItems();
+            List<String> spcialItems = plugin.getItemconfig().AllSpecialItems();
             for (String str : spcialItems) {
                 list.add(str.toLowerCase());
             }

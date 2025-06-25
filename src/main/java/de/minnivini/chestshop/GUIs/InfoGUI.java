@@ -9,6 +9,8 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -16,8 +18,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 
-public class InfoGUI {
+public class InfoGUI implements CommandExecutor {
     public void InfoGUI(CommandSender commandSender) {
+        ChestShop plugin = ChestShop.getPlugin(ChestShop.class);
         Player player = (Player) commandSender;
         int maxDiastance = 100;
         Block block = getTargetBlock(player, maxDiastance);
@@ -25,17 +28,17 @@ public class InfoGUI {
             int xCoord = block.getLocation().getBlockX();
             int yCoord = block.getLocation().getBlockY();
             int zCoord = block.getLocation().getBlockZ();
-            if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord) != null) {
+            if (plugin.getShopconfig().getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord) != null) {
                 if (player.hasPermission("chestshop.shopinfo")) {
-                    String item = ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord);
+                    String item = plugin.getShopconfig().getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord);
                     ItemStack itemStack = new ItemStack(new ItemBuilder(Material.DIRT).build());
                     String seller = ((Sign) block.getState()).getLine(2);
                     String Preis = ((Sign) block.getState()).getLine(1);
                     if (item.equals("Air")) {
                         player.sendMessage(lang.getMessage("invalidMaterial"));
                     } else {
-                        if (ChestShop.getPlugin(ChestShop.class).IDCheck(item) != null) {
-                            itemStack = ChestShop.getPlugin(ChestShop.class).getNBT(item);
+                        if (plugin.getItemconfig().IDCheck(item) != null) {
+                            itemStack = plugin.getItemconfig().getNBT(item);
                         } else {
                             itemStack.setType(Material.valueOf(item));
                         }
@@ -67,5 +70,11 @@ public class InfoGUI {
             }
         }
         return null; // Wenn kein Block gefunden wird
+    }
+
+    @Override
+    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+        InfoGUI(commandSender);
+        return false;
     }
 }

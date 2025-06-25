@@ -4,7 +4,9 @@ main: de.minnivini.chestshop.ChestShop
 api-version: '1.21'
 commands:
   chestshop:
-    description: Zeigt infos über den Shop
+    description: Normal plugin command
+  shopinfo:
+    description: Shows info about the shop
 permissions:
   chestshop.shopinfo:
     description: Allows players to run the /cs info command
@@ -25,8 +27,11 @@ permissions:
     description: Allows Players to teleport to shops by using /cs info
     default: true
   chestshop.admincreate:
-    description: Allows Players to create admin Shops
+    description: Allows Players to create and destroy admin Shops
     default: op
   chestshop.interact:
     description: Allows Players to interact with chests from other players shops
     default: op
+  chestshop.max.x:
+    description: Allows Admins to set max amount of chestshops per player
+    default: false

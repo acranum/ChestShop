@@ -19,28 +19,49 @@ import java.util.Objects;
 
 public class BlockBreak implements Listener {
 
+    ChestShop plugin = ChestShop.getPlugin(ChestShop.class);
+
     @EventHandler
     public void SignBreak(BlockBreakEvent e) {
-        Player player = e.getPlayer();
+        Player p = e.getPlayer();
         if (e.getBlock().getState() instanceof Sign) {
+            Sign sign = (Sign) e.getBlock().getState();
             int xCoord = e.getBlock().getLocation().getBlockX();
             int yCoord = e.getBlock().getLocation().getBlockY();
             int zCoord = e.getBlock().getLocation().getBlockZ();
-            if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord) != null) {
-                if (player.hasPermission("chestshop.break")) {
-                    ChestShop.getPlugin(ChestShop.class).removeItemFromShopConfig(player.getWorld().getName() ,xCoord, yCoord, zCoord);
-                    if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord) == null) {
-                        player.sendMessage(lang.getMessage("shopRemove"));
-                    } else player.sendMessage(lang.getMessage("shopRemoveErr"));
+            if (plugin.getShopconfig().getItemFromShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord) != null) {
+                if (sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
+                    if (plugin.getShopconfig().getItemFromShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord) != null) {
+                        if (p.isOp() || p.hasPermission("chestshop.admincreate")) {
+                            plugin.getShopconfig().removeItemFromShopConfig(p.getWorld().getName() ,xCoord, yCoord, zCoord);
+                            if (plugin.getShopconfig().getItemFromShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord) == "") {
+                                p.sendMessage(lang.getMessage("shopRemove"));
+                            } else {
+                                e.setCancelled(true);
+                                p.sendMessage(lang.getMessage("shopRemoveErr"));
+                            }
+                        } else e.setCancelled(true);
+                    }
                 } else {
-                    e.setCancelled(true);
+                    if (plugin.getShopconfig().getItemFromShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord) != null) {
+                        if (p.hasPermission("chestshop.break") || sign.getLine(2).equals(p.getName())) {
+                            plugin.getShopconfig().removeItemFromShopConfig(p.getWorld().getName() ,xCoord, yCoord, zCoord);
+                            if (plugin.getShopconfig().getItemFromShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord) == "") {
+                                p.sendMessage(lang.getMessage("shopRemove"));
+                                plugin.getShopconfig().removeShopFromPlayer(p);
+                            } else {
+                                e.setCancelled(true);
+                                p.sendMessage(lang.getMessage("shopRemoveErr"));
+                            }
+                        } else e.setCancelled(true);
+                    }
                 }
             }
         }
     }
     @EventHandler
     public void ChestBreak(BlockBreakEvent e) {
-        Player player = e.getPlayer();
+        Player p = e.getPlayer();
         //if (e.getBlock().getType().toString().contains("CHEST")) {
             int[][] directions = {{0, 0, 1}, {0 , 0, -1}, {1, 0, 0}, {-1, 0, 0}};
             Location chestLocation = e.getBlock().getLocation();
@@ -61,7 +82,6 @@ public class BlockBreak implements Listener {
                             Block attachedBlock = currentBlock.getRelative(((org.bukkit.block.data.type.WallSign) currentBlock.getBlockData()).getFacing().getOppositeFace());
                             if (!(attachedBlock.equals(e.getBlock()))) return;
                         } else if (sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
-                            System.out.println(currentBlock.getType().toString());
                             if (currentBlock.getType().toString().endsWith("_WALL_SIGN")) {
                                 Block attachedBlock = currentBlock.getRelative(((org.bukkit.block.data.type.WallSign) currentBlock.getBlockData()).getFacing().getOppositeFace());
                                 if (!(attachedBlock.equals(e.getBlock()))) return;
@@ -73,16 +93,32 @@ public class BlockBreak implements Listener {
                         int yCoord = currentLocation.getBlockY();
                         int zCoord = currentLocation.getBlockZ();
                         String world = currentLocation.getWorld().getName();
-                        if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(world, xCoord, yCoord, zCoord) != null) {
-                            if (player.hasPermission("chestshop.break")) {
-                                ChestShop.getPlugin(ChestShop.class).removeItemFromShopConfig(player.getWorld().getName() ,xCoord, yCoord, zCoord);
-                                if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(player.getWorld().getName(), xCoord, yCoord, zCoord) == null) {
-                                    player.sendMessage(lang.getMessage("shopRemove"));
-                                } else {
-                                    e.setCancelled(true);
-                                    player.sendMessage(lang.getMessage("shopRemoveErr"));
-                                }
-                            } else e.setCancelled(true);
+
+                        if (sign.getLine(0).equalsIgnoreCase("§a[Adminshop]")) {
+                            if (plugin.getShopconfig().getItemFromShopConfig(world, xCoord, yCoord, zCoord) != null) {
+                                if (p.isOp() || p.hasPermission("chestshop.admincreate")) {
+                                    plugin.getShopconfig().removeItemFromShopConfig(world ,xCoord, yCoord, zCoord);
+                                    if (plugin.getShopconfig().getItemFromShopConfig(world, xCoord, yCoord, zCoord) == "") {
+                                        p.sendMessage(lang.getMessage("shopRemove"));
+                                    } else {
+                                        e.setCancelled(true);
+                                        p.sendMessage(lang.getMessage("shopRemoveErr"));
+                                    }
+                                } else e.setCancelled(true);
+                            }
+                        } else {
+                            if (plugin.getShopconfig().getItemFromShopConfig(world, xCoord, yCoord, zCoord) != null) {
+                                if (p.hasPermission("chestshop.break") || sign.getLine(2).equals(p.getName())) {
+                                    plugin.getShopconfig().removeItemFromShopConfig(world ,xCoord, yCoord, zCoord);
+                                    if (plugin.getShopconfig().getItemFromShopConfig(world, xCoord, yCoord, zCoord) == "") {
+                                        p.sendMessage(lang.getMessage("shopRemove"));
+                                        plugin.getShopconfig().removeShopFromPlayer(p);
+                                    } else {
+                                        e.setCancelled(true);
+                                        p.sendMessage(lang.getMessage("shopRemoveErr"));
+                                    }
+                                } else e.setCancelled(true);
+                            }
                         }
                     }
                 }
@@ -111,7 +147,7 @@ public class BlockBreak implements Listener {
                         int yCoord = currentLocation.getBlockY();
                         int zCoord = currentLocation.getBlockZ();
                         String world = currentLocation.getWorld().getName();
-                        if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(world, xCoord, yCoord, zCoord) != null) {
+                        if (plugin.getShopconfig().getItemFromShopConfig(world, xCoord, yCoord, zCoord) != null) {
                             if (p.hasPermission("chestshop.interact")) return;
                             if (!sign.getLine(2).equals(p.getName())) e.setCancelled(true);
                         }
@@ -147,8 +183,8 @@ public class BlockBreak implements Listener {
                             int yCoord = currentLocation.getBlockY();
                             int zCoord = currentLocation.getBlockZ();
                             String world = currentLocation.getWorld().getName();
-                            if (ChestShop.getPlugin(ChestShop.class).getItemFromShopConfig(world, xCoord, yCoord, zCoord) != null) {
-                                if (ChestShop.getPlugin(ChestShop.class).defaultConfig.getBoolean("SHOP_HOPPER_PROTECTION")) {
+                            if (plugin.getShopconfig().getItemFromShopConfig(world, xCoord, yCoord, zCoord) != null) {
+                                if (plugin.getDefaultConfig().defaultConfig.getBoolean("SHOP_HOPPER_PROTECTION")) {
                                     e.setCancelled(true);
                                 }
                             }

@@ -1,4 +1,4 @@
-version: 1.01
+version: 1.02
 #ErrorMessages
 "PlayerOnly": "§4Dieser Befehl kann nur von Spielern ausgeführt werden :8"
 "NoLanguage": "§4Bitte nenne eine verfügbare Sprache"
@@ -26,6 +26,7 @@ version: 1.01
 "notEngouthItemsChest": "§cEs sind nicht genug <item>s in dem Shop"
 "noShopAvailable": "Kein Shop verfügbar"
 "inventoryFull": "§4Inventar voll!"
+"maxShops": "§4Maximale Anzahl an Shops erreicht"
 
 #SuccessMessages
 "ShopCreateSells": "§aDu hast erfolgreich einen Shop erstellt, welcher <item>'s für <price> verkauft"

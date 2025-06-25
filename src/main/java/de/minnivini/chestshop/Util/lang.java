@@ -11,9 +11,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class lang {
+
     public static String getMessage(String message){
+        ChestShop plugin = ChestShop.getPlugin(ChestShop.class);
         File languageFolder = new File(ChestShop.getPlugin(ChestShop.class).getDataFolder() + "/language");
-        String language = ChestShop.getPlugin(ChestShop.class).getLanguage();
+        String language = plugin.getDefaultConfig().getLanguage();
         File langFile = new File(languageFolder, language + ".yml");
         if (!langFile.exists()) {
             return "Check your language files!";

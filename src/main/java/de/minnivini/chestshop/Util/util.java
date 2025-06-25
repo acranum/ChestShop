@@ -1,14 +1,27 @@
 package de.minnivini.chestshop.Util;
 
-public class util {
-    public String Splt(String Splitter, String input) {
-        String[] parts = input.split(Splitter);
-        String itemName = null;
-        if (parts.length == 2) {
-            itemName = parts[0]; // Der Name des Gegenstands (z. B. TNT)
-            int amount = Integer.parseInt(parts[1]); // Die Anzahl des Gegenstands als Integer
-        }
-        return itemName;
-    }
+import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
+public class util {
+    public static int getMaxShops(Player p) {
+        int max = 0;
+
+        for (PermissionAttachmentInfo perminfo : p.getEffectivePermissions()) {
+            String perm = perminfo.getPermission();
+            if (perm.startsWith("chestshop.max.")) {
+                try {
+                    int value = Integer.parseInt(perm.substring("chestshop.max.".length()));
+                    if (value > max) {
+                        max = value;
+                    }
+                }catch (NumberFormatException e) {
+
+                }
+            }
+
+        }
+
+        return max;
+    }
 }
