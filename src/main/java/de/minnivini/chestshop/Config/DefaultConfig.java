@@ -1,17 +1,19 @@
 package de.minnivini.chestshop.Config;
 
 import de.minnivini.chestshop.ChestShop;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefaultConfig {
 
     public FileConfiguration defaultConfig;
     private final ChestShop plugin;
+    private Set<Material> blacklistedItems = new HashSet<>();
 
     public DefaultConfig(ChestShop plugin) {
         this.plugin = plugin;
@@ -27,6 +29,8 @@ public class DefaultConfig {
         defaultConfig.setDefaults(YamlConfiguration.loadConfiguration(configFile));
         defaultConfig.options().copyDefaults(true);
         plugin.saveDefaultConfig();
+
+        loadBlacklistedItems();
     }
     public String getLanguage() {
         if (defaultConfig.contains("language")) {
@@ -46,16 +50,12 @@ public class DefaultConfig {
             return Collections.singletonList("example%example");
         }
     }
-    public List<String> getBlackItems() {
-        if (defaultConfig.contains("Item_Blacklist")) {
-            List<String> items = defaultConfig.getStringList("Item_Blacklist");
+    public Set<Material> getBlacklistedItems() {
+        return blacklistedItems;
+    }
 
-            if (items == null) {
-                items.add("example%example");
-            }
-            return items;
-        }else {
-            return Collections.singletonList("example%example");
-        }
+    private void loadBlacklistedItems() {
+        List<String> items = defaultConfig.getStringList("Item_Blacklist");
+        blacklistedItems = items.stream().map(Material::getMaterial).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 }

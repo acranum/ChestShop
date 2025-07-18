@@ -17,10 +17,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class SignListener implements Listener {
     public String itemName;
@@ -69,7 +66,7 @@ public class SignListener implements Listener {
                                     } else {
                                         itemName = firstItem.getType().toString();
                                     }
-                                    if (!CheckBlackItems(itemName)) {
+                                    if (isBlacklisted(itemName)) {
                                         p.sendMessage(lang.getMessage("ItemBlacklist"));
                                         itemName = "?";
                                     }
@@ -189,7 +186,7 @@ public class SignListener implements Listener {
                     if (p.getInventory().getItemInMainHand() != null && !p.getInventory().getItemInMainHand().equals(Material.AIR)) {
                         ItemStack item = p.getInventory().getItemInMainHand();
                         Material itemMat = item.getType();
-                        if (!CheckBlackItems(itemMat.toString())) {
+                        if (isBlacklisted(itemMat.toString())) {
                             p.sendMessage(lang.getMessage("ItemBlacklist"));
                             e.setCancelled(true);
                             return;
@@ -301,7 +298,7 @@ public class SignListener implements Listener {
                         }
                     }
                     if (material != null && material != Material.AIR) {
-                        if (!CheckBlackItems(material.toString())) {
+                        if (isBlacklisted(material.toString())) {
                             p.sendMessage(lang.getMessage("ItemBlacklist"));
                             e.setCancelled(true);
                             return;
@@ -397,14 +394,13 @@ public class SignListener implements Listener {
         item.replace("_", " ");
         return item;
     }
-    private boolean CheckBlackItems(String itemm) {
-        List<String> BlackItems = plugin.getDefaultConfig().getBlackItems();
-        for (String item : BlackItems) {
-            Material blacklistedMaterial = Material.matchMaterial(item);
-            String blacklistedItem = blacklistedMaterial.toString();
-            if (itemm.equals(blacklistedItem)) return false;
+    private boolean isBlacklisted(String itemStack) {
+        Material material = Material.getMaterial(itemStack);
+        if (material == null) {
+            return false;
         }
-        return true;
+
+        return plugin.getDefaultConfig().getBlacklistedItems().contains(material);
     }
 
     private String setPrice(String price) {
