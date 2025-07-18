@@ -5,8 +5,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 
 public class util {
     public static int getMaxShops(Player p) {
-        int max = 0;
-
+        int max = -1;
         for (PermissionAttachmentInfo perminfo : p.getEffectivePermissions()) {
             String perm = perminfo.getPermission();
             if (perm.startsWith("chestshop.max.")) {
@@ -15,13 +14,9 @@ public class util {
                     if (value > max) {
                         max = value;
                     }
-                }catch (NumberFormatException e) {
-
-                }
+                }catch (NumberFormatException e) { }
             }
-
         }
-
         return max;
     }
 }

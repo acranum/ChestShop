@@ -52,7 +52,6 @@ public class Shopconfig {
 
     public void addItemToShopConfig(String world, int xCoord, int yCoord, int zCoord, String item, Player p) {
         String key = world + "§" + xCoord + "§" + yCoord + "§" + zCoord;
-        String key1 = "uuid" + xCoord + "_" + yCoord + "_" + zCoord;
         if (plugin.getDefaultConfig().getBlackWorlds() == null) {
             shopConfig.set("shops." + key, item);
             saveShopConfig();
@@ -120,14 +119,13 @@ public class Shopconfig {
         return 0;
     }
     public void addShopToPlayer(Player p) {
-        if (util.getMaxShops(p) == 0) return;
         UUID uuid = p.getUniqueId();
         String path = "players." + uuid;
         if (shopConfig.contains(path)) {
-            if (shopConfig.getInt(path) < util.getMaxShops(p)) {
+            if (shopConfig.getInt(path) < util.getMaxShops(p) || util.getMaxShops(p) == -1) {
                 shopConfig.set(path, shopConfig.getInt(path) + 1);
                 saveShopConfig();
-            } else p.sendMessage(lang.getMessage("maxShops").replace("<amount>", String.valueOf(plugin.getShopconfig().getShopsFromPlayer(p))));
+            } else p.sendMessage(lang.getMessage("maxShops").replace("<amount>", String.valueOf(util.getMaxShops(p))));
         } else {
             addPlayerToShopConfig(p, 0);
         }

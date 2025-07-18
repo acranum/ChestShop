@@ -42,7 +42,7 @@ public class BlockBreak implements Listener {
                             }
                         } else e.setCancelled(true);
                     }
-                } else {
+                } else if (sign.getLine(0).equalsIgnoreCase("§a[Shop]")){
                     if (plugin.getShopconfig().getItemFromShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord) != null) {
                         if (p.hasPermission("chestshop.break") || sign.getLine(2).equals(p.getName())) {
                             plugin.getShopconfig().removeItemFromShopConfig(p.getWorld().getName() ,xCoord, yCoord, zCoord);
@@ -106,7 +106,7 @@ public class BlockBreak implements Listener {
                                     }
                                 } else e.setCancelled(true);
                             }
-                        } else {
+                        } else if (sign.getLine(0).equalsIgnoreCase("§a[Shop]")) {
                             if (plugin.getShopconfig().getItemFromShopConfig(world, xCoord, yCoord, zCoord) != null) {
                                 if (p.hasPermission("chestshop.break") || sign.getLine(2).equals(p.getName())) {
                                     plugin.getShopconfig().removeItemFromShopConfig(world ,xCoord, yCoord, zCoord);
@@ -184,7 +184,7 @@ public class BlockBreak implements Listener {
                             int zCoord = currentLocation.getBlockZ();
                             String world = currentLocation.getWorld().getName();
                             if (plugin.getShopconfig().getItemFromShopConfig(world, xCoord, yCoord, zCoord) != null) {
-                                if (plugin.getDefaultConfig().defaultConfig.getBoolean("SHOP_HOPPER_PROTECTION")) {
+                                if (plugin.getDefaultConfig().defaultConfig.getBoolean("Shop_hopper_protection")) {
                                     e.setCancelled(true);
                                 }
                             }

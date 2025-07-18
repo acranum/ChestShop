@@ -24,19 +24,17 @@ import java.util.UUID;
 
 public class SignListener implements Listener {
     public String itemName;
-    boolean mBuying = false;
     private final Map<UUID, Long> clickCooldown = new HashMap<>();
 
     ChestShop plugin = ChestShop.getPlugin(ChestShop.class);
 
     @EventHandler
     public void onSignChange(SignChangeEvent e) {
-        //erstellung vom schild
         String Preis = null;
         Player p = e.getPlayer();
         String player = p.getName();
         if (e.getLine(0).equalsIgnoreCase("[Shop]") && p.hasPermission("chestshop.create")) {
-            if (plugin.getShopconfig().getShopsFromPlayer(p) < util.getMaxShops(p)) {
+            if (plugin.getShopconfig().getShopsFromPlayer(p) < util.getMaxShops(p) || util.getMaxShops(p) == -1) {
                 if (e.getBlock().getType().toString().endsWith("_WALL_SIGN")) {
                     Block attachedBlock = e.getBlock().getRelative(((org.bukkit.block.data.type.WallSign) e.getBlock().getBlockData()).getFacing().getOppositeFace());
                     if (attachedBlock.getType() == Material.CHEST || attachedBlock.getType() == Material.TRAPPED_CHEST) {
@@ -52,11 +50,9 @@ public class SignListener implements Listener {
                             int xCoord = e.getBlock().getLocation().getBlockX();
                             int yCoord = e.getBlock().getLocation().getBlockY();
                             int zCoord = e.getBlock().getLocation().getBlockZ();
-                            String uuid = String.valueOf(e.getPlayer().getUniqueId());
 
-                            if (state instanceof Chest) {
+                            if (state instanceof Chest chest) {
 
-                                Chest chest = (Chest) state;
                                 Inventory chestInventory = chest.getBlockInventory();
                                 ItemStack[] contents = chestInventory.getContents();
 
@@ -68,7 +64,7 @@ public class SignListener implements Listener {
                                         } else {
                                             plugin.getItemconfig().addCurrentNumber(firstItem);
                                             int currentID = plugin.getItemconfig().currentID();
-                                            itemName = firstItem.getType().toString() + "#" + currentID;
+                                            itemName = firstItem.getType() + "#" + currentID;
                                         }
                                     } else {
                                         itemName = firstItem.getType().toString();
@@ -96,7 +92,7 @@ public class SignListener implements Listener {
                         }
                     }
                 }
-            } else p.sendMessage(lang.getMessage("maxShops").replace("<amount>", String.valueOf(plugin.getShopconfig().getShopsFromPlayer(p))));
+            } else p.sendMessage(lang.getMessage("maxShops").replace("<amount>", String.valueOf(util.getMaxShops(p))));
         } else if (e.getLine(0).equalsIgnoreCase("[aShop]") && p.hasPermission("chestshop.admincreate")) {
             List<String> WBlacklist = plugin.getDefaultConfig().getBlackWorlds();
             BlockState state = null;
@@ -117,8 +113,6 @@ public class SignListener implements Listener {
                 int xCoord = e.getBlock().getLocation().getBlockX();
                 int yCoord = e.getBlock().getLocation().getBlockY();
                 int zCoord = e.getBlock().getLocation().getBlockZ();
-                String uuid = String.valueOf(e.getPlayer().getUniqueId());
-                //get first item
 
                 e.setLine(1, setPrice(e.getLine(1)));
 
@@ -164,8 +158,6 @@ public class SignListener implements Listener {
             }
         }
     }
-
-
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
