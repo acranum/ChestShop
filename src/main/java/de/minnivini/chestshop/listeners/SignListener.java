@@ -332,7 +332,7 @@ public class SignListener implements Listener {
 
                                                     economy.withdrawPlayer(offlineplayer, Preis);
                                                     economy.depositPlayer(p, Preis);
-                                                    if (offlineplayer.isOnline() || !offlineplayer.equals(p)) {
+                                                    if (offlineplayer.isOnline() && !offlineplayer.equals(p)) {
                                                         offlineplayer.getPlayer().sendMessage(lang.getMessage("hassold").replace("<player>", p.getDisplayName()).replace("<item>", sign.getLine(3).toLowerCase()).replace("<amount>", String.valueOf(amount)));
                                                     }
                                                     p.sendMessage(lang.getMessage("youhassold").replace("<item>", sign.getLine(3).toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(" + (count - amount) + ")");
@@ -355,7 +355,7 @@ public class SignListener implements Listener {
 
                                             economy.withdrawPlayer(p, Preis);
                                             economy.depositPlayer(offlineplayer, Preis);
-                                            if (offlineplayer.isOnline() || !offlineplayer.equals(p)) {
+                                            if (offlineplayer.isOnline() && !offlineplayer.equals(p)) {
                                                 offlineplayer.getPlayer().sendMessage(lang.getMessage("hasbought").replace("<player>", p.getDisplayName()).replace("<item>", sign.getLine(3).toLowerCase()).replace("<amount>", String.valueOf(amount)));
                                             }
                                             p.sendMessage(lang.getMessage("youhasbought").replace("<item>", sign.getLine(3).toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(" + (count - amount) + ")");
@@ -428,7 +428,6 @@ public class SignListener implements Listener {
     private String getPrice(String price) {
         String Preis;
         Preis = price.replace(" (Buying)", "").replaceAll("[ ]", "").replaceAll("[$]", "");
-        System.out.println(Preis);
         Preis = Preis.replaceAll("[^0-9.]", "x");
         if (Preis.contains("x")) Preis = "0";
         return Preis;
