@@ -1,0 +1,39 @@
+name: ChestShop
+version: '${project.version}'
+main: de.acranum.chestshop.ChestShop
+api-version: '1.21'
+depend: [Vault]
+
+commands:
+  chestshop:
+    description: Normal plugin command
+  shopinfo:
+    description: Shows info about the shop
+permissions:
+  chestshop.shopinfo:
+    description: Allows players to run the /cs info command
+    default: true
+  chestshop.create:
+    description: Allows players to create sign shops
+    default: true
+  chestshop.buy:
+    description: Allows players to buy items from shops
+    default: true
+  chestshop.sell:
+    description: Allows players to sell items from shops
+    default: true
+  chestshop.break:
+    description: Allows players to break shops
+    default: true
+  chestshop.tp:
+    description: Allows Players to teleport to shops by using /cs info
+    default: true
+  chestshop.admincreate:
+    description: Allows Players to create and destroy admin Shops
+    default: op
+  chestshop.interact:
+    description: Allows Players to interact with chests from other players shops
+    default: op
+  chestshop.max.x:
+    description: Allows Admins to set max amount of chestshops per player
+    default: false

@@ -2,6 +2,23 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.5.0] - 2025-09-11
+
+### Added
+- Developer API
+- Addons
+  - 🪄 [ChestShop Holographic Items](https://github.com/acranum/ChestShop-addons)
+- Github wiki
+- Sounds
+
+### Changed
+- Changes in internal file structure
+- Improved Language / Message System [Discord #ideas](https://discord.com/channels/1385269992265875577/1397571567373910181/1397571567373910181)
+
+### Fixed
+- [Github #9](https://github.com/acranum/ChestShop/pull/9)
+  fix: validate blacklist correctly
+
 ## [1.4.2] - 2025-06-25
 
 ### Added
