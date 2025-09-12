@@ -2,18 +2,14 @@ package de.acranum.chestshop.api;
 
 import de.acranum.chestshop.api.shop.Shop;
 import de.acranum.chestshop.ChestShop;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class ChestShopApiImpl implements ChestShopAPI {

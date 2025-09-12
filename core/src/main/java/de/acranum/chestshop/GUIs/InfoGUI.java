@@ -3,6 +3,7 @@ package de.acranum.chestshop.GUIs;
 import de.acranum.chestshop.ChestShop;
 import de.acranum.chestshop.Util.ItemBuilder;
 import de.acranum.chestshop.Util.lang;
+import de.acranum.chestshop.api.shop.ShopType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,43 +19,55 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 
 public class InfoGUI implements CommandExecutor {
+
+    private final ChestShop plugin = ChestShop.getInstance();
+    final int maxDistance = 100;
+
     public void InfoGUI(CommandSender commandSender) {
-        ChestShop plugin = ChestShop.getPlugin(ChestShop.class);
         Player player = (Player) commandSender;
-        int maxDiastance = 100;
-        Block block = getTargetBlock(player, maxDiastance);
-        if (block != null && block.getState() instanceof Sign) {
-            if (plugin.getShopconfig().getItemName(block.getLocation()) != null) {
-                if (player.hasPermission("chestshop.shopinfo")) {
-                    String item = plugin.getShopconfig().getItemName(block.getLocation());
-                    ItemStack itemStack = new ItemStack(new ItemBuilder(Material.DIRT).build());
-                    String seller = ((Sign) block.getState()).getLine(2);
-                    String Preis = ((Sign) block.getState()).getLine(1);
-                    if (item.equals("Air")) {
-                        player.sendMessage(lang.getMessage("invalidMaterial"));
-                    } else {
-                        if (plugin.getItemconfig().IDCheck(item) != null) {
-                            itemStack = plugin.getItemconfig().getNBT(item);
-                        } else {
-                            itemStack.setType(Material.valueOf(item));
-                        }
-                        Inventory inv = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.BOLD + "§3Shop Info");
+        Block block = getTargetBlock(player, maxDistance);
 
-                        //glass
-                        ItemStack blackglass = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).build();
-                        inv.setItem(0, blackglass);
-                        inv.setItem(2, blackglass);
-                        inv.setItem(4, blackglass);
+        if (block == null || !(block.getState() instanceof Sign)) {
+            player.sendMessage(lang.getMessage("lookatSign"));
+            return;
+        }
+        if (plugin.getShopconfig().getItemName(block.getLocation()) == null) {
+            player.sendMessage(lang.getMessage("lookatSign"));
+            return;
+        }
+        if (!player.hasPermission("chestshop.shopinfo")) {
+            player.sendMessage(lang.getMessage("noPermission"));
+            return;
+        }
 
-                        inv.setItem(1, itemStack);
-                        inv.setItem(3, new ItemBuilder(Material.PAPER).setDisplayname(ChatColor.BOLD + "§fInfo: ").setGlow().setLore("§7" + lang.getMessage("seller").replace("<seller>", seller), "§7" + lang.getMessage("price").replace("<price>", Preis)).build());
-                        player.openInventory(inv);
-                        if (!Bukkit.getOfflinePlayer(seller).hasPlayedBefore()) inv.setItem(3, new ItemBuilder(Material.PAPER).setDisplayname(ChatColor.BOLD + "§fInfos: ").setGlow().setLore("§7" + lang.getMessage("seller").replace("<seller>", "§a[AdminShop]"), "§7" + lang.getMessage("price").replace("<price>", Preis)).build());
-                    }
-                } else player.sendMessage(lang.getMessage("noPermission"));
-            } else player.sendMessage(lang.getMessage("lookatSign"));
-        } else player.sendMessage(lang.getMessage("lookatSign"));
+        String item = plugin.getShopconfig().getItemName(block.getLocation());
+        String seller = ((Sign) block.getState()).getLine(2);
+        if (plugin.getShopconfig().getShopType(block.getLocation()).equals(ShopType.ADMIN_SHOP)) seller = "§a[AdminShop]";
+        String Preis = ((Sign) block.getState()).getLine(1);
 
+        if (item.equalsIgnoreCase("Air") || item.equalsIgnoreCase("?")) {
+            player.sendMessage(lang.getMessage("invalidMaterial"));
+            return;
+        }
+
+        ItemStack itemStack = new ItemStack(new ItemBuilder(Material.BARRIER).build());
+        if (plugin.getItemconfig().IDCheck(item) != null) {
+            itemStack = plugin.getItemconfig().getNBT(item);
+        } else if (!(item.equalsIgnoreCase("Air")) && !(item.equalsIgnoreCase("?"))) {
+            itemStack.setType(plugin.getShopconfig().getShop(block.getLocation()).getItem().getType());
+        }
+        itemStack.setAmount(plugin.getShopconfig().getAmount(block.getLocation()));
+
+        Inventory inv = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.BOLD + "§3Shop Info");
+
+        ItemStack BlackGlass = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).build();
+        inv.setItem(0, BlackGlass);
+        inv.setItem(2, BlackGlass);
+        inv.setItem(4, BlackGlass);
+
+        inv.setItem(1, itemStack);
+        inv.setItem(3, new ItemBuilder(Material.PAPER).setDisplayname(ChatColor.BOLD + "§fInfo: ").setGlow().setLore("§7" + lang.getMessage("seller").replace("<seller>", seller), "§7" + lang.getMessage("price").replace("<price>", Preis)).build());
+        player.openInventory(inv);
     }
     public Block getTargetBlock(Player player, int maxDistance) {
         BlockIterator iterator = new BlockIterator(player, maxDistance);
@@ -65,7 +78,7 @@ public class InfoGUI implements CommandExecutor {
                 return block;
             }
         }
-        return null; // Wenn kein Block gefunden wird
+        return null;
     }
 
     @Override

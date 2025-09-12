@@ -29,7 +29,7 @@ public class SignListener implements Listener {
     public String itemName;
     private final Map<UUID, Long> clickCooldown = new HashMap<>();
 
-    private ChestShop plugin = ChestShop.getInstance();
+    private final ChestShop plugin = ChestShop.getInstance();
 
 
     @EventHandler
@@ -124,7 +124,7 @@ public class SignListener implements Listener {
                 } else itemName = "?";
             } else itemName = "?";
 
-            if (amount == null || !amount.matches("\\d+") || amount == "0") {
+            if (amount == null || !amount.matches("\\d+") || amount.equals("0")) {
                 amount = "1";
             }
             AdminShopCreate(e, p, itemName, price, amount, foundItem);
@@ -132,7 +132,7 @@ public class SignListener implements Listener {
     }
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
-        int count = 0;
+        int count;
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
         Block clickedBlock = e.getClickedBlock();
@@ -226,7 +226,7 @@ public class SignListener implements Listener {
             }
             p.playSound(p.getLocation(), "block.amethyst_block.place", 1.0f, 1.0f);
             plugin.getShopconfig().addShopToPlayer(p);
-            ;
+
             sign.setLine(3, itemName);
             sign.update();
 

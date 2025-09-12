@@ -43,9 +43,7 @@ public class addon {
                     Bukkit.getServer().getPluginManager().enablePlugin(loaded);
                     Bukkit.getLogger().info(lang.getMessage("loadAddon").replace("<addon>", jar.getName()));
                     loadedAddons.add(loaded);
-                } catch (InvalidPluginException e) {
-                    throw new RuntimeException(e);
-                } catch (InvalidDescriptionException e) {
+                } catch (InvalidPluginException | InvalidDescriptionException e) {
                     throw new RuntimeException(e);
                 }
 
