@@ -12,7 +12,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.HangingSign;
 import org.bukkit.block.data.type.WallSign;
@@ -23,7 +22,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 
@@ -35,8 +33,7 @@ public class BlockBreak implements Listener {
     public void SignBreak(BlockBreakEvent e) {
         if (plugin.getShopconfig().getShop(e.getBlock().getLocation()) == null) return;
         Player p = e.getPlayer();
-        if (e.getBlock().getState() instanceof Sign) {
-            Sign sign = (Sign) e.getBlock().getState();
+        if (e.getBlock().getState() instanceof Sign sign) {
 
             if (plugin.getShopconfig().getShop(e.getBlock().getLocation()) == null) return;
             if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("AdminSignTitle"))) {
@@ -86,8 +83,7 @@ public class BlockBreak implements Listener {
             if (!(relative.getState() instanceof Sign)) continue;
 
             Block SignBlock;
-            if (relative.getBlockData() instanceof WallSign) {
-                WallSign wallSign = (WallSign) relative.getBlockData();
+            if (relative.getBlockData() instanceof WallSign wallSign) {
                 if (!(wallSign.getFacing() == face)) continue;
                 SignBlock = relative;
             } else if (relative.getBlockData() instanceof HangingSign) {
@@ -152,23 +148,27 @@ public class BlockBreak implements Listener {
                 Location currentLocation = new Location(chestLocation.getWorld(), chestLocation.getBlockX() + xOffset, chestLocation.getBlockY() + yOffset, chestLocation.getBlockZ() + zOffset);
                 Block currentBlock = currentLocation.getBlock();
 
-                if (currentBlock.getState() instanceof Sign) {
-                    Sign sign = (Sign) currentBlock.getState();
-                    if (plugin.getShopconfig().getItemName(e.getClickedBlock().getLocation()) == null) return;
-                    if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle"))) {
-                        if (p.hasPermission("chestshop.interact")) { e.setCancelled(true); return; }
-                        if (!sign.getLine(2).equals(p.getName())) { e.setCancelled(true); return; }
+                if (currentBlock.getState() instanceof Sign sign) {
+                    if (plugin.getShopconfig().getItemName(currentLocation) == null) return;
 
+                    if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle"))) {
+                        if (!p.hasPermission("chestshop.interact")) {
+                            if (!plugin.getShopconfig().getOwner(currentLocation).getUniqueId().equals(p.getUniqueId())) {
+                                p.sendMessage(lang.getMessage("noPermission")); e.setCancelled(true); return;
+                            }
+                        }
                         ShopOpenEvent ShopOpenEvent = new ShopOpenEvent(new Shop(currentBlock, plugin.getShopconfig().getShopType(currentLocation), plugin.getShopconfig().getPrice(currentLocation), plugin.getShopconfig().getOwner(currentLocation), plugin.getShopconfig().NameToItem(plugin.getShopconfig().getItemName(currentLocation)), plugin.getShopconfig().getAmount(currentLocation)),p, e.getClickedBlock());
                         Bukkit.getPluginManager().callEvent(ShopOpenEvent);
-                        if (ShopOpenEvent.isCancelled()) { e.setCancelled(true); return; }
+                        if (ShopOpenEvent.isCancelled()) { p.sendMessage(ShopOpenEvent.getCancelMessage()); e.setCancelled(true); return; }
 
                     } else if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("AdminSignTitle"))) {
-                        if (!p.hasPermission("chestshop.interact") || !p.hasPermission("chestshop.admincreate")) { e.setCancelled(true); return; }
+                        if (!p.hasPermission("chestshop.interact") || !p.hasPermission("chestshop.admincreate")) {
+                            p.sendMessage(lang.getMessage("noPermission")); e.setCancelled(true); return;
+                        }
 
                         ShopOpenEvent ShopOpenEvent = new ShopOpenEvent(new Shop(currentBlock, plugin.getShopconfig().getShopType(currentLocation), plugin.getShopconfig().getPrice(currentLocation), plugin.getShopconfig().getOwner(currentLocation), plugin.getShopconfig().NameToItem(plugin.getShopconfig().getItemName(currentLocation)), plugin.getShopconfig().getAmount(currentLocation)),p, e.getClickedBlock());
                         Bukkit.getPluginManager().callEvent(ShopOpenEvent);
-                        if (ShopOpenEvent.isCancelled()) { e.setCancelled(true); return; }
+                        if (ShopOpenEvent.isCancelled()) {p.sendMessage(ShopOpenEvent.getCancelMessage()); e.setCancelled(true); return; }
                     }
                 }
             }
@@ -190,10 +190,8 @@ public class BlockBreak implements Listener {
                     Location currentLocation = new Location(chestLocation.getWorld(), chestLocation.getBlockX() + xOffset, chestLocation.getBlockY() + yOffset, chestLocation.getBlockZ() + zOffset);
                     Block currentBlock = currentLocation.getBlock();
 
-                    if (currentBlock.getState() instanceof Sign) {
-                        Sign sign = (Sign) currentBlock.getState();
+                    if (currentBlock.getState() instanceof Sign sign) {
                         if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle")) || sign.getLine(0).equalsIgnoreCase(lang.getMessage("AdminSignTitle"))) {
-                            String world = currentLocation.getWorld().getName();
                             if (plugin.getShopconfig().getItemName(currentLocation) != null) {
                                 if (plugin.getDefaultConfig().defaultConfig.getBoolean("Shop_hopper_protection")) {
                                     e.setCancelled(true);
@@ -212,7 +210,7 @@ public class BlockBreak implements Listener {
         Preis = price.replace(" (Buying)", "").replaceAll("[ ]", "").replaceAll("[$]", "");
         Preis = Preis.replaceAll("[^0-9.]", "x");
         if (Preis.contains("x")) Preis = "0";
-        if (Preis.equals("") || Preis.equals(null)) Preis = "0";
+        if (Preis.isEmpty()) Preis = "0";
         return Preis;
     }
 }

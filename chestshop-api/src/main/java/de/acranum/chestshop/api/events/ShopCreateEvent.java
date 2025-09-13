@@ -33,7 +33,6 @@ public class ShopCreateEvent extends ShopEvent implements Cancellable {
 
     @Override
     public void setCancelled(boolean b) {
-        this.cancelled = b;
         cancelled = b;
     }
     @Override

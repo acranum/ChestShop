@@ -10,11 +10,15 @@ public class ShopOpenEvent extends ShopEvent implements Cancellable {
 
     private final Player player;
     private final Block CestBlock;
+    private boolean cancelled;
+    private String cancelMessage;
 
     public ShopOpenEvent(Shop shop, Player player, Block CestBlock) {
         super(shop);
         this.player = player;
         this.CestBlock = CestBlock;
+        this.cancelled = false;
+        this.cancelMessage = "";
     }
 
     public Player getPlayer() {
@@ -25,11 +29,18 @@ public class ShopOpenEvent extends ShopEvent implements Cancellable {
 
     @Override
     public boolean isCancelled() {
-        return false;
+        return cancelled;
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
-
+    public void setCancelled(boolean b) {
+        cancelled = b;
+    }
+    public void setCancelled(boolean b, String message) {
+        cancelled = b;
+        cancelMessage = message;
+    }
+    public String getCancelMessage() {
+        return cancelMessage;
     }
 }
