@@ -55,21 +55,20 @@ public class BlockBreak implements Listener {
                     }
                 }
             } else if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle"))){
-                if (plugin.getShopconfig().getItemName(e.getBlock().getLocation()) != null) {
-                    if (!p.hasPermission("chestshop.break") && !sign.getLine(2).equals(p.getName())) { e.setCancelled(true); return; }
+                if (!p.hasPermission("chestshop.interact") && !plugin.getShopconfig().getOwner(e.getBlock().getLocation()).getUniqueId().equals(p.getUniqueId())) { e.setCancelled(true); return; }
 
-                    ShopDestroyEvent shopDestroyEvent = new ShopDestroyEvent(new Shop(e.getBlock(), plugin.getShopconfig().getShopType(e.getBlock().getLocation()), plugin.getShopconfig().getPrice(e.getBlock().getLocation()),plugin.getShopconfig().getOwner(e.getBlock().getLocation()), plugin.getShopconfig().NameToItem(plugin.getShopconfig().getItemName(e.getBlock().getLocation())), plugin.getShopconfig().getAmount(e.getBlock().getLocation())), p, DestroyReason.PLAYER);
-                    Bukkit.getPluginManager().callEvent(shopDestroyEvent);
-                    if (shopDestroyEvent.isCancelled()) { e.setCancelled(true); return; }
+                ShopDestroyEvent shopDestroyEvent = new ShopDestroyEvent(new Shop(e.getBlock(), plugin.getShopconfig().getShopType(e.getBlock().getLocation()), plugin.getShopconfig().getPrice(e.getBlock().getLocation()),plugin.getShopconfig().getOwner(e.getBlock().getLocation()), plugin.getShopconfig().NameToItem(plugin.getShopconfig().getItemName(e.getBlock().getLocation())), plugin.getShopconfig().getAmount(e.getBlock().getLocation())), p, DestroyReason.PLAYER);
+                Bukkit.getPluginManager().callEvent(shopDestroyEvent);
+                if (shopDestroyEvent.isCancelled()) { e.setCancelled(true); return; }
 
-                    plugin.getShopconfig().RemoveShopFromShopConfig(e.getBlock().getLocation());
-                    if (plugin.getShopconfig().getShop(e.getBlock().getLocation()) == null) {
-                        p.sendMessage(lang.getMessage("shopRemove"));
-                        plugin.getShopconfig().removeShopFromPlayer(p);
-                    } else {
-                        e.setCancelled(true);
-                        sign.update();
-                        p.sendMessage(lang.getMessage("shopRemoveErr")); }
+                plugin.getShopconfig().RemoveShopFromShopConfig(e.getBlock().getLocation());
+                if (plugin.getShopconfig().getShop(e.getBlock().getLocation()) == null) {
+                    p.sendMessage(lang.getMessage("shopRemove"));
+                    plugin.getShopconfig().removeShopFromPlayer(p);
+                } else {
+                    e.setCancelled(true);
+                    sign.update();
+                    p.sendMessage(lang.getMessage("shopRemoveErr"));
                 }
             }
         }
@@ -106,7 +105,6 @@ public class BlockBreak implements Listener {
                     return; }
                 plugin.getShopconfig().RemoveShopFromShopConfig(SignBlock.getLocation());
                 plugin.getShopconfig().saveShopConfig();
-                System.out.println("!!!" + plugin.getShopconfig().getShop(e.getBlock().getLocation()));
                 if (plugin.getShopconfig().getShop(SignBlock.getLocation()) == null) {
                     p.sendMessage(lang.getMessage("shopRemove"));
                 } else {
@@ -114,7 +112,7 @@ public class BlockBreak implements Listener {
                     p.sendMessage(lang.getMessage("shopRemoveErr"));
                 }
             } else if (plugin.getShopconfig().getShopType(SignBlock.getLocation()).equals(ShopType.SHOP)){
-                if (!p.hasPermission("chestshop.break") && !sign.getLine(2).equals(p.getName())) { e.setCancelled(true); return; }
+                if (!p.hasPermission("chestshop.interact") && !plugin.getShopconfig().getOwner(SignBlock.getLocation()).getUniqueId().equals(p.getUniqueId())) { e.setCancelled(true); return; }
 
                 ShopDestroyEvent shopDestroyEvent = new ShopDestroyEvent(new Shop(SignBlock, plugin.getShopconfig().getShopType(SignBlock.getLocation()), plugin.getShopconfig().getPrice(SignBlock.getLocation()),plugin.getShopconfig().getOwner(SignBlock.getLocation()), plugin.getShopconfig().NameToItem(plugin.getShopconfig().getItemName(SignBlock.getLocation())), 1), p, DestroyReason.PLAYER);
                 Bukkit.getPluginManager().callEvent(shopDestroyEvent);
@@ -122,7 +120,6 @@ public class BlockBreak implements Listener {
 
                 plugin.getShopconfig().RemoveShopFromShopConfig(SignBlock.getLocation());
                 plugin.getShopconfig().saveShopConfig();
-                System.out.println("!!!" + plugin.getShopconfig().getShop(e.getBlock().getLocation()));
                 if (plugin.getShopconfig().getShop(SignBlock.getLocation()) == null) {
                     p.sendMessage(lang.getMessage("shopRemove"));
                     plugin.getShopconfig().removeShopFromPlayer(p);

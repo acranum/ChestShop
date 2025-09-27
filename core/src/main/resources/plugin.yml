@@ -22,9 +22,6 @@ permissions:
   chestshop.sell:
     description: Allows players to sell items from shops
     default: true
-  chestshop.break:
-    description: Allows players to break shops
-    default: true
   chestshop.tp:
     description: Allows Players to teleport to shops by using /cs info
     default: true

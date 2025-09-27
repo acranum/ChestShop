@@ -58,7 +58,6 @@ chestshop.shopinfo
 chestshop.create
 chestshop.search
 chestshop.buy
-chestshop.break
 chestshop.admincreate
 chestshop.tp
 chestshop.interact
