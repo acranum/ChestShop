@@ -66,7 +66,7 @@ public class InfoGUI implements CommandExecutor {
         inv.setItem(4, BlackGlass);
 
         inv.setItem(1, itemStack);
-        inv.setItem(3, new ItemBuilder(Material.PAPER).setDisplayname(ChatColor.BOLD + "§fInfo: ").setGlow().setLore("§7" + lang.getMessage("seller").replace("<seller>", seller), "§7" + lang.getMessage("price").replace("<price>", Preis)).build());
+        inv.setItem(3, new ItemBuilder(Material.PAPER).setDisplayname(ChatColor.BOLD + "§fInfo: ").setGlow().setLore("§7" + lang.getMessage("seller").replace("<seller>", seller), "§7" + lang.getMessage("price").replace("<price>", Preis), "§7" + lang.getMessage("amount").replace("<amount>", String.valueOf(itemStack.getAmount()))).build());
         player.openInventory(inv);
     }
     public Block getTargetBlock(Player player, int maxDistance) {

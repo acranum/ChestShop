@@ -1,4 +1,4 @@
-version: 1.03
+version: 1.04
 
 "SignTitle": "§a[Shop]"
 "AdminSignTitle": "§a[Adminshop]"
@@ -50,4 +50,5 @@ version: 1.03
 
 "seller": "seller: <seller>"
 "price": "price: <price>"
+"amount": "amount: <amount>x"
 "$": "$"

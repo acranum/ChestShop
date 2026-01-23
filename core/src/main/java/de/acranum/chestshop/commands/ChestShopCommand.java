@@ -19,11 +19,11 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         InfoGUI InfoGUI = new InfoGUI();
-        Player player = (Player) commandSender;
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(Objects.requireNonNull(lang.getMessage("PlayerOnly")));
             return true;
         }
+        Player player = (Player) commandSender;
         if (args.length > 0) {
             switch (args[0].toLowerCase()) {
                 case "info":

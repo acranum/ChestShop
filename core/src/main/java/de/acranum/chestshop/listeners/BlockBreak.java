@@ -173,34 +173,38 @@ public class BlockBreak implements Listener {
     }
     @EventHandler
     public void HopperMovement(InventoryMoveItemEvent e) {
-        InventoryType destination = e.getDestination().getType();
-        if (destination == InventoryType.HOPPER) {
-            Block source = Objects.requireNonNull(e.getSource().getLocation()).getBlock();
-            if (e.getSource().getType() == InventoryType.CHEST) {
-                int[][] directions = {{0, 0, 1}, {0, 0, -1}, {1, 0, 0}, {-1, 0, 0}};
-                Location chestLocation = source.getLocation();
-                for (int[] direction : directions) {
-                    int xOffset = direction[0];
-                    int yOffset = direction[1];
-                    int zOffset = direction[2];
 
-                    Location currentLocation = new Location(chestLocation.getWorld(), chestLocation.getBlockX() + xOffset, chestLocation.getBlockY() + yOffset, chestLocation.getBlockZ() + zOffset);
-                    Block currentBlock = currentLocation.getBlock();
+        if (e.getDestination().getType() != InventoryType.HOPPER) return;
+        if (e.getSource().getType() != InventoryType.CHEST) return;
 
-                    if (currentBlock.getState() instanceof Sign sign) {
-                        if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle")) || sign.getLine(0).equalsIgnoreCase(lang.getMessage("AdminSignTitle"))) {
-                            if (plugin.getShopconfig().getItemName(currentLocation) != null) {
-                                if (plugin.getDefaultConfig().defaultConfig.getBoolean("Shop_hopper_protection")) {
-                                    e.setCancelled(true);
-                                }
-                            }
-                        }
-                    }
-                }
+        Block chestBlock = Objects.requireNonNull(e.getSource().getLocation()).getBlock();
+        Location chestLocation = chestBlock.getLocation();
 
-            }
+        final int[][] directions = {{0, 0, 1}, {0, 0, -1}, {1, 0, 0}, {-1, 0, 0}};
+
+        if (!plugin.getDefaultConfig().defaultConfig.getBoolean("Shop_hopper_protection")) {
+            return;
         }
 
+        for (int[] direction : directions) {
+            int xOffset = direction[0];
+            int yOffset = direction[1];
+            int zOffset = direction[2];
+
+            Location currentLocation = new Location(chestLocation.getWorld(), chestLocation.getBlockX() + xOffset, chestLocation.getBlockY() + yOffset, chestLocation.getBlockZ() + zOffset);
+            Block currentBlock = currentLocation.getBlock();
+
+            Material type = currentBlock.getType();
+            if (type == Material.OAK_SIGN || type == Material.OAK_WALL_SIGN) {
+                Sign sign = (Sign) currentBlock.getState();
+                if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle")) || sign.getLine(0).equalsIgnoreCase(lang.getMessage("AdminSignTitle"))) {
+                    if (plugin.getShopconfig().getItemName(currentLocation) != null) {
+                        e.setCancelled(true);
+
+                    }
+                }
+            }
+        }
     }
     private String getPrice(String price) {
         String Preis;

@@ -12,7 +12,7 @@
 
     <groupId>de.minnivini</groupId>
     <artifactId>ChestShop</artifactId>
-    <version>1.5</version>
+    <version>1.5.1</version>
     <packaging>jar</packaging>
 
     <name>ChestShop</name>

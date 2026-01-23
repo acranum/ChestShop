@@ -2,6 +2,15 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [1.5.1] - 2026-01-23
+
+### Added
+- Multiple item support
+
+### Fixed
+- Changed sign edit mechanics
+
+
 ## [1.5.0] - 2025-09-11
 
 ### Added

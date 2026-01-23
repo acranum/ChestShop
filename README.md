@@ -39,7 +39,7 @@ Compatible with plugins such as (LuckPerms, GroupManager, PowerRanks)
 If you want to specify the item later, you can leave the chest empty. This will display a `?` on the 4th line of the sign. 
 You can then set the item by right-clicking the sign while holding the item in your hand.
 2. Write in first Line of the sign `[Shop]` to create a shop / write `[aShop]` to create an admin shop
-3. in the 2nd line you can set the selling price (e.g. 100 = 100$). If you want your chest to buy items from other players, just write a "b" before or behind the price
+3. in the 2nd line you can set the selling price (e.g. 100 = 100$). If you want your chest to buy items from other players, just write a `b` before or behind the price
 4. now you can click on `Done`, and your store sign should have been created
 
 ![ChestShopExplain](https://github.com/user-attachments/assets/0e4ecf1d-c910-4c2c-9162-ee63b7a5917c)

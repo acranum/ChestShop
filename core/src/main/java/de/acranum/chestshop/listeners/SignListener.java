@@ -37,6 +37,8 @@ public class SignListener implements Listener {
         String price = setPrice(e.getLine(1));
         Player p = e.getPlayer();
         if (e.getLine(0).equalsIgnoreCase("[Shop]") && p.hasPermission("chestshop.create") || (e.getLine(0).equalsIgnoreCase("shop")) && p.hasPermission("chestshop.create") || (e.getLine(0).equalsIgnoreCase(ChatColor.stripColor(lang.getMessage("SignTitle")).replaceAll("[\\[\\]]", ""))) && p.hasPermission("chestshop.create")) {
+            int amount = getAmount(e.getLine(3));
+
             if (plugin.getShopconfig().getShopsFromPlayer(p) >= util.getMaxShops(p) && util.getMaxShops(p) != -1) {
                 p.sendMessage(lang.getMessage("maxShops").replace("<amount>", String.valueOf(util.getMaxShops(p))));
                 return;
@@ -81,18 +83,25 @@ public class SignListener implements Listener {
                             p.sendMessage(lang.getMessage("ItemBlacklist"));
                             itemName = "?";
                         }
+                        System.out.println("1");
+                    } else if (Material.matchMaterial(ChatColor.stripColor(e.getLine(3).replaceAll("[0-9x ]", ""))) != null) {
+                        itemName = String.valueOf(Material.matchMaterial(ChatColor.stripColor(e.getLine(3).replaceAll("[0-9x ]", ""))));
+                        foundItem = new ItemStack(Material.matchMaterial(itemName));
                     } else itemName = "?";
+                }else if (Material.matchMaterial(ChatColor.stripColor(e.getLine(3).replaceAll("[0-9x ]", ""))) != null) {
+                    itemName = String.valueOf(Material.matchMaterial(ChatColor.stripColor(e.getLine(3).replaceAll("[0-9x ]", ""))));
+                    foundItem = new ItemStack(Material.matchMaterial(itemName));
                 } else itemName = "?";
             }
-            PlayerShopCreate(e, Bukkit.getOfflinePlayer(p.getUniqueId()), p, itemName, price, foundItem);
-        } else if (e.getLine(0).equalsIgnoreCase("[aShop]") && p.hasPermission("chestshop.admincreate") || (e.getLine(0).equalsIgnoreCase("aShop")) && p.hasPermission("chestshop.admincreate") || e.getLine(0).equalsIgnoreCase(ChatColor.stripColor(lang.getMessage("SignTitle")).replaceAll("[\\[\\]]", "")) && p.hasPermission("chestshop.admincreate")) {
+            PlayerShopCreate(e, Bukkit.getOfflinePlayer(p.getUniqueId()), p, itemName, amount, price, foundItem);
+        } else if (e.getLine(0).equalsIgnoreCase("[aShop]") && p.hasPermission("chestshop.admincreate") || (e.getLine(0).equalsIgnoreCase("aShop")) && p.hasPermission("chestshop.admincreate") || e.getLine(0).replaceAll("[\\[\\]]", "").equalsIgnoreCase(ChatColor.stripColor(lang.getMessage("AdminSignTitle")).replaceAll("[\\[\\]]", "")) && p.hasPermission("chestshop.admincreate")) {
             BlockState state = null;
 
             if (e.getBlock().getType().toString().endsWith("_WALL_SIGN")) {
                 Block attachedBlock = e.getBlock().getRelative(((org.bukkit.block.data.type.WallSign) e.getBlock().getBlockData()).getFacing().getOppositeFace());
                 state = attachedBlock.getState();
             }
-            String amount = e.getLine(2);
+            int amount = getAmount(e.getLine(2));
 
             ItemStack foundItem = null;
             if (state instanceof Chest chest) {
@@ -124,8 +133,8 @@ public class SignListener implements Listener {
                 } else itemName = "?";
             } else itemName = "?";
 
-            if (amount == null || !amount.matches("\\d+") || amount.equals("0")) {
-                amount = "1";
+            if (amount == 0) {
+                amount = 1;
             }
             AdminShopCreate(e, p, itemName, price, amount, foundItem);
         }
@@ -150,7 +159,7 @@ public class SignListener implements Listener {
             return;
         }
         if (clickCooldown.containsKey(uuid) && now - clickCooldown.get(uuid) < 300) { //Double click --> edit
-            if (!p.getName().equals(sign.getLine(2))) {
+            if (!p.getName().equals(sign.getLine(2)) && !p.hasPermission("chestshop.admincreate")) {
                 e.setCancelled(true);
                 return;
             }
@@ -162,11 +171,12 @@ public class SignListener implements Listener {
                 return;
             }
             plugin.getShopconfig().removeShopFromPlayer(p);
+
             return;
         }
         clickCooldown.put(uuid, now);
 
-        if (sign.getLine(3).equalsIgnoreCase("?") && sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle")) || sign.getLine(3).equalsIgnoreCase("?") && sign.getLine(0).equalsIgnoreCase(lang.getMessage("AdminSignTitle"))) {
+        if (sign.getLine(3).contains("?") && sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle")) || sign.getLine(3).contains("?") && sign.getLine(0).equalsIgnoreCase(lang.getMessage("AdminSignTitle"))) {
             e.setCancelled(true);
             if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("AdminSignTitle")) && !e.getPlayer().hasPermission("chestshop.admincreate")) {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
@@ -227,7 +237,7 @@ public class SignListener implements Listener {
             p.playSound(p.getLocation(), "block.amethyst_block.place", 1.0f, 1.0f);
             plugin.getShopconfig().addShopToPlayer(p);
 
-            sign.setLine(3, itemName);
+            sign.setLine(3, amount + "x §r" + itemName);
             sign.update();
 
             //PostShopCreateEvent
@@ -326,16 +336,18 @@ public class SignListener implements Listener {
             Chest chest = (Chest) chestBlock.getState();
             Inventory chestInventory = chest.getInventory();
 
-            int amount = 1;
+            int SignAmount = plugin.getShopconfig().getAmount(e.getClickedBlock().getLocation());
+            int PlayerItemCount = countItems(p.getInventory(), item);
+            int amount = SignAmount;
             if (p.isSneaking()) {
-                amount = item.getMaxStackSize();
-                if (isBuying(plugin.getShopconfig().getPrice(e.getClickedBlock().getLocation()))) { //if selling
-                    if (countItems(p.getInventory(), item) < item.getMaxStackSize()) {
-                        amount = countItems(p.getInventory(), item);
-                    }
+                if (PlayerItemCount < item.getMaxStackSize() && PlayerItemCount > SignAmount) {
+                    amount = PlayerItemCount;
+                } else {
+                    amount = item.getMaxStackSize();
                 }
-                price = price * amount;
             }
+            price = (price/SignAmount)*amount;
+
 
             item.setAmount(amount);
             if (isBuying(plugin.getShopconfig().getPrice(e.getClickedBlock().getLocation()))) {
@@ -375,7 +387,7 @@ public class SignListener implements Listener {
                 count = countItems(chestInventory, item);
                 if (!(count >= amount)) {
                     p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
-                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("notEngouthItemsChest").replace("<item>", sign.getLine(3).toLowerCase())));
+                    p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("notEngouthItemsChest").replace("<item>", item.getType().name().toLowerCase())));
                     return;
                 } // Check if <amount> item is in chest
                 if (economy.getBalance(p) < price) {
@@ -387,9 +399,9 @@ public class SignListener implements Listener {
             }
         }
     }
-    public void PlayerShopCreate(SignChangeEvent e, OfflinePlayer owner, Player p, String itemName, String price, ItemStack foundItem) {
+    public void PlayerShopCreate(SignChangeEvent e, OfflinePlayer owner, Player p, String itemName, Integer amount, String price, ItemStack foundItem) {
         //ShopCreateEvent
-        ShopCreateEvent shopCreateEvent = new ShopCreateEvent(new Shop(e.getBlock(), ShopType.SHOP, price, owner, foundItem, 1), p);
+        ShopCreateEvent shopCreateEvent = new ShopCreateEvent(new Shop(e.getBlock(), ShopType.SHOP, price, owner, foundItem, amount), p);
         Bukkit.getPluginManager().callEvent(shopCreateEvent);
         if (shopCreateEvent.isCancelled()) {
             return;
@@ -398,22 +410,22 @@ public class SignListener implements Listener {
         e.setLine(0, lang.getMessage("SignTitle"));
         e.setLine(1, price);
         e.setLine(2, p.getName());
-        e.setLine(3, itemName);
+        e.setLine(3, amount + "x §r" + itemName);
 
         //plugin.getShopconfig().addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
-        plugin.getShopconfig().AddShopToShopConfig(new Shop(e.getBlock(), ShopType.SHOP, price, owner, foundItem, 1), itemName);
+        plugin.getShopconfig().AddShopToShopConfig(new Shop(e.getBlock(), ShopType.SHOP, price, owner, foundItem, amount), itemName);
         if (!price.contains("(Buying)")) {p.sendMessage(lang.getMessage("ShopCreateSells").replace("<item>", itemName).replace("<price>", price));
         } else {p.sendMessage(lang.getMessage("ShopCreateBuys").replace("<item>", itemName).replace("<price>", price).replace(" (Buying)", ""));}
         p.playSound(p.getLocation(), "block.amethyst_block.place", 1.0f, 1.0f);
         plugin.getShopconfig().addShopToPlayer(p);
 
         //PostShopCreateEvent
-        PostShopCreateEvent postShopCreateEvent = new PostShopCreateEvent(new Shop(e.getBlock(), ShopType.SHOP, price, owner, foundItem, 1), p);
+        PostShopCreateEvent postShopCreateEvent = new PostShopCreateEvent(new Shop(e.getBlock(), ShopType.SHOP, price, owner, foundItem, amount), p);
         Bukkit.getPluginManager().callEvent(postShopCreateEvent);
     }
-    public void AdminShopCreate(SignChangeEvent e, Player p, String itemName, String price, String amount, ItemStack foundItem) {
+    public void AdminShopCreate(SignChangeEvent e, Player p, String itemName, String price, Integer amount, ItemStack foundItem) {
         //ShopCreateEvent
-        ShopCreateEvent shopCreateEvent = new ShopCreateEvent(new Shop(e.getBlock(), ShopType.ADMIN_SHOP, price, null, foundItem, Integer.parseInt(amount)), p);
+        ShopCreateEvent shopCreateEvent = new ShopCreateEvent(new Shop(e.getBlock(), ShopType.ADMIN_SHOP, price, null, foundItem, amount), p);
         Bukkit.getPluginManager().callEvent(shopCreateEvent);
         if (shopCreateEvent.isCancelled()) {
             return;
@@ -421,17 +433,17 @@ public class SignListener implements Listener {
 
         e.setLine(0, lang.getMessage("AdminSignTitle"));
         e.setLine(1, price);
-        e.setLine(2, amount);
+        e.setLine(2, amount + "x §r");
         e.setLine(3, itemName);
 
         //plugin.getShopconfig().addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
-        plugin.getShopconfig().AddShopToShopConfig(new Shop(e.getBlock(), ShopType.ADMIN_SHOP, price, null, foundItem, Integer.parseInt(amount)), itemName);
+        plugin.getShopconfig().AddShopToShopConfig(new Shop(e.getBlock(), ShopType.ADMIN_SHOP, price, null, foundItem, amount), itemName);
         if (!price.contains("(Buying)")) {p.sendMessage(lang.getMessage("ShopCreateSells").replace("<item>", itemName).replace("<price>", price));
         } else {p.sendMessage(lang.getMessage("ShopCreateBuys").replace("<item>", itemName).replace("<price>", price).replace(" (Buying)", ""));}
         p.playSound(p.getLocation(), "block.amethyst_block.place", 1.0f, 1.0f);
 
         //PostShopCreateEvent
-        PostShopCreateEvent postShopCreateEvent = new PostShopCreateEvent(new Shop(e.getBlock(), ShopType.ADMIN_SHOP, price, null, foundItem, Integer.parseInt(amount)), p);
+        PostShopCreateEvent postShopCreateEvent = new PostShopCreateEvent(new Shop(e.getBlock(), ShopType.ADMIN_SHOP, price, null, foundItem, amount), p);
         Bukkit.getPluginManager().callEvent(postShopCreateEvent);
     }
 
@@ -447,11 +459,11 @@ public class SignListener implements Listener {
         economy.depositPlayer(owner, price);
 
         if (owner.isOnline() && !owner.equals(p)) {
-            owner.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("hasbought").replace("<player>", p.getDisplayName()).replace("<item>", sign.getLine(3).toLowerCase()).replace("<amount>", String.valueOf(amount))));
+            owner.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("hasbought").replace("<player>", p.getDisplayName()).replace("<item>", item.getType().name().toLowerCase()).replace("<amount>", String.valueOf(amount))));
         }
         p.sendMessage();
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
-        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("youhasbought").replace("<item>", sign.getLine(3).toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(" + (count - amount) + ")"));
+        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("youhasbought").replace("<item>",item.getType().name().toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(" + (count - amount) + ")"));
 
     }
     public void AdminPlayerBuy(Sign sign, ItemStack item, Player p, Double price) {
@@ -462,7 +474,7 @@ public class SignListener implements Listener {
         p.getInventory().addItem(item);
 
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
-        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("youhasbought").replace("<item>", sign.getLine(3).toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(Adminshop)"));
+        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("youhasbought").replace("<item>", item.getType().name().toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(Adminshop)"));
     }
     public void PlayerSell(Inventory chestInv, Sign sign, ItemStack item, Player p, OfflinePlayer offlinePlayer, Double price) { //TODO: Add PlayerSell Event
         Economy economy = ChestShop.getEconomy();
@@ -474,10 +486,10 @@ public class SignListener implements Listener {
         economy.withdrawPlayer(offlinePlayer, price);
         economy.depositPlayer(p, price);
         if (offlinePlayer.isOnline() && !offlinePlayer.equals(p)) {
-            offlinePlayer.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("hassold").replace("<player>", p.getDisplayName()).replace("<item>", sign.getLine(3).toLowerCase()).replace("<amount>", String.valueOf(amount))));
+            offlinePlayer.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("hassold").replace("<player>", p.getDisplayName()).replace("<item>", item.getType().name().toLowerCase()).replace("<amount>", String.valueOf(amount))));
         }
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
-        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("youhassold").replace("<item>", sign.getLine(3).toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(" + count + ")"));
+        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("youhassold").replace("<item>", item.getType().name().toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(" + count + ")"));
     }
     public void AdminPlayerSell(Sign sign, ItemStack item, Player p, Double price) {
         Economy economy = ChestShop.getEconomy();
@@ -488,7 +500,7 @@ public class SignListener implements Listener {
         economy.depositPlayer(p, price);
 
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
-        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("youhassold").replace("<item>", sign.getLine(3).toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(" + count + ")"));
+        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("youhassold").replace("<item>", item.getType().name().toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(" + count + ")"));
     }
 
     private int countItems(Inventory inventory, ItemStack itemToSearch) {
@@ -511,17 +523,16 @@ public class SignListener implements Listener {
     private String setPrice(String price) {
         String Preis;
         Preis = price.replaceAll("[$]", "");
+        if (Preis.toLowerCase().contains("b")) {
+            Preis = Preis.replace(" (Buying)", "");
+            Preis = Preis.replaceAll("[bB]", "");
+            return Preis + lang.getMessage("$") + " (Buying)";
+        }
         Preis = Preis.replaceAll("[^0-9.bB ]", "x");
         if (price == null || price.equalsIgnoreCase("") || Preis.contains("x")) {
             Preis = String.valueOf(0);
-            return "0" + lang.getMessage("$");
         }
         Preis = Preis.replaceAll("[ ]", "");
-        if (Preis.toLowerCase().contains("b")) {
-            Preis = Preis.replaceAll("[bB]", "");
-            Preis.replace(" (Buying)", "");
-            return Preis + lang.getMessage("$") + " (Buying)";
-        }
         return Preis + lang.getMessage("$");
     }
     private boolean isBuying(String price) {
@@ -529,6 +540,17 @@ public class SignListener implements Listener {
             return true;
         }
         return false;
+    }
+    private Integer getAmount(String amount) {
+        StringBuilder digits = new StringBuilder();
+
+        for (char c : amount.toCharArray()) {
+            if (Character.isDigit(c)) {
+                digits.append(c);
+            }
+        }
+        if (digits.isEmpty()) {return 1;}
+        return Integer.parseInt(digits.toString());
     }
     private String getPrice(String price) {
         String Preis;
