@@ -2,10 +2,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [1.5.1] - 2026-01-23
+## [1.5.1] - 2026-01-24
 
 ### Added
 - Multiple item support
+- ShopBuyEvent / ShopSellEvent
 
 ### Fixed
 - Changed sign edit mechanics

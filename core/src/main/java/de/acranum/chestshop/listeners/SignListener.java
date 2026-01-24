@@ -1,8 +1,6 @@
 package de.acranum.chestshop.listeners;
 
-import de.acranum.chestshop.api.events.PostShopCreateEvent;
-import de.acranum.chestshop.api.events.ShopCreateEvent;
-import de.acranum.chestshop.api.events.ShopDestroyEvent;
+import de.acranum.chestshop.api.events.*;
 import de.acranum.chestshop.api.shop.DestroyReason;
 import de.acranum.chestshop.api.shop.Shop;
 import de.acranum.chestshop.api.shop.ShopType;
@@ -447,7 +445,14 @@ public class SignListener implements Listener {
         Bukkit.getPluginManager().callEvent(postShopCreateEvent);
     }
 
-    public void PlayerBuy(Inventory chestInv, Sign sign, ItemStack item, Player p, OfflinePlayer owner, Double price) { //TODO: Add PlayerBuy Event
+    public void PlayerBuy(Inventory chestInv, Sign sign, ItemStack item, Player p, OfflinePlayer owner, Double price) {
+        //ShopBuyEvent
+        ShopBuyEvent shopBuyEvent = new ShopBuyEvent(new Shop(sign.getBlock(), ShopType.SHOP, String.valueOf(price), owner, item, item.getAmount()), p);
+        Bukkit.getPluginManager().callEvent(shopBuyEvent);
+        if (shopBuyEvent.isCancelled()) {
+            return;
+        }
+
         Economy economy = ChestShop.getEconomy();
         int amount = item.getAmount();
         int count = countItems(chestInv, item);
@@ -467,6 +472,13 @@ public class SignListener implements Listener {
 
     }
     public void AdminPlayerBuy(Sign sign, ItemStack item, Player p, Double price) {
+        //ShopBuyEvent
+        ShopBuyEvent shopBuyEvent = new ShopBuyEvent(new Shop(sign.getBlock(), ShopType.SHOP, String.valueOf(price), null, item, item.getAmount()), p);
+        Bukkit.getPluginManager().callEvent(shopBuyEvent);
+        if (shopBuyEvent.isCancelled()) {
+            return;
+        }
+
         Economy economy = ChestShop.getEconomy();
         int amount = item.getAmount();
 
@@ -476,22 +488,36 @@ public class SignListener implements Listener {
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("youhasbought").replace("<item>", item.getType().name().toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(Adminshop)"));
     }
-    public void PlayerSell(Inventory chestInv, Sign sign, ItemStack item, Player p, OfflinePlayer offlinePlayer, Double price) { //TODO: Add PlayerSell Event
+    public void PlayerSell(Inventory chestInv, Sign sign, ItemStack item, Player p, OfflinePlayer owner, Double price) {
+        //ShopSellEvent
+        ShopSellEvent shopsellEvent = new ShopSellEvent(new Shop(sign.getBlock(), ShopType.SHOP, String.valueOf(price), owner, item, item.getAmount()), p);
+        Bukkit.getPluginManager().callEvent(shopsellEvent);
+        if (shopsellEvent.isCancelled()) {
+            return;
+        }
+
         Economy economy = ChestShop.getEconomy();
         int amount = item.getAmount();
         int count = countItems(p.getInventory(), item);
 
         p.getInventory().removeItem(item);
         chestInv.addItem(item);
-        economy.withdrawPlayer(offlinePlayer, price);
+        economy.withdrawPlayer(owner, price);
         economy.depositPlayer(p, price);
-        if (offlinePlayer.isOnline() && !offlinePlayer.equals(p)) {
-            offlinePlayer.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("hassold").replace("<player>", p.getDisplayName()).replace("<item>", item.getType().name().toLowerCase()).replace("<amount>", String.valueOf(amount))));
+        if (owner.isOnline() && !owner.equals(p)) {
+            owner.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("hassold").replace("<player>", p.getDisplayName()).replace("<item>", item.getType().name().toLowerCase()).replace("<amount>", String.valueOf(amount))));
         }
         p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
         p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("youhassold").replace("<item>", item.getType().name().toLowerCase()).replace("<amount>", String.valueOf(amount)) + "(" + count + ")"));
     }
     public void AdminPlayerSell(Sign sign, ItemStack item, Player p, Double price) {
+        //ShopSellEvent
+        ShopSellEvent shopsellEvent = new ShopSellEvent(new Shop(sign.getBlock(), ShopType.SHOP, String.valueOf(price), null, item, item.getAmount()), p);
+        Bukkit.getPluginManager().callEvent(shopsellEvent);
+        if (shopsellEvent.isCancelled()) {
+            return;
+        }
+
         Economy economy = ChestShop.getEconomy();
         int amount = item.getAmount();
         int count = countItems(p.getInventory(), item);

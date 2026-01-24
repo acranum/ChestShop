@@ -1,14 +1,9 @@
 package de.acranum.chestshop.api.events;
 
 import de.acranum.chestshop.api.shop.Shop;
-import de.acranum.chestshop.api.shop.ShopType;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
-import org.bukkit.inventory.ItemStack;
 
 public class ShopCreateEvent extends ShopEvent implements Cancellable {
     private final Player player;

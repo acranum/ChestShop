@@ -5,13 +5,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class ShopBuyEvent extends ShopEvent implements Cancellable {
+public class ShopSellEvent extends ShopEvent implements Cancellable {
     private final Player player;
     private boolean cancelled;
 
     private static final HandlerList handlers = new HandlerList();
 
-    public ShopBuyEvent(Shop shop, Player player) {
+    public ShopSellEvent(Shop shop, Player player) {
         super(shop);
         this.player = player;
         this.cancelled = false;
@@ -22,10 +22,12 @@ public class ShopBuyEvent extends ShopEvent implements Cancellable {
     }
 
     @Override
-    public boolean isCancelled() {return cancelled;}
+    public boolean isCancelled() {
+        return cancelled;
+    }
 
     @Override
-    public void setCancelled(boolean b) {
-        cancelled = b;
+    public void setCancelled(boolean cancel) {
+        cancelled = cancel;
     }
 }
