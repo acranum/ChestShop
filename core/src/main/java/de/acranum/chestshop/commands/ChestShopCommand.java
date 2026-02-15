@@ -5,6 +5,8 @@ import de.acranum.chestshop.GUIs.InfoGUI;
 import de.acranum.chestshop.GUIs.ShopSearchGUI;
 import de.acranum.chestshop.Util.lang;
 import de.acranum.chestshop.api.addon;
+import de.acranum.chestshop.api.events.command.CommandEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -18,6 +20,12 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+
+        CommandEvent commandEvent = new CommandEvent(commandSender, command, s, args);
+        Bukkit.getPluginManager().callEvent(commandEvent);
+        if (commandEvent.isCancelled()) {
+            return true;
+        }
         InfoGUI InfoGUI = new InfoGUI();
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(Objects.requireNonNull(lang.getMessage("PlayerOnly")));

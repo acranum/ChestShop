@@ -81,7 +81,6 @@ public class SignListener implements Listener {
                             p.sendMessage(lang.getMessage("ItemBlacklist"));
                             itemName = "?";
                         }
-                        System.out.println("1");
                     } else if (Material.matchMaterial(ChatColor.stripColor(e.getLine(3).replaceAll("[0-9x ]", ""))) != null) {
                         itemName = String.valueOf(Material.matchMaterial(ChatColor.stripColor(e.getLine(3).replaceAll("[0-9x ]", ""))));
                         foundItem = new ItemStack(Material.matchMaterial(itemName));
@@ -91,7 +90,11 @@ public class SignListener implements Listener {
                     foundItem = new ItemStack(Material.matchMaterial(itemName));
                 } else itemName = "?";
             }
-            PlayerShopCreate(e, Bukkit.getOfflinePlayer(p.getUniqueId()), p, itemName, amount, price, foundItem);
+            if (e.getLine(1).equalsIgnoreCase("@Dev+shop")) { // Dev test code "@Dev+shop"
+                PlayerShopCreate(e, Bukkit.getOfflinePlayer("@Dev+shop"), p, itemName, amount, price, foundItem);
+            } else {
+                PlayerShopCreate(e, Bukkit.getOfflinePlayer(p.getUniqueId()), p, itemName, amount, price, foundItem);
+            }
         } else if (e.getLine(0).equalsIgnoreCase("[aShop]") && p.hasPermission("chestshop.admincreate") || (e.getLine(0).equalsIgnoreCase("aShop")) && p.hasPermission("chestshop.admincreate") || e.getLine(0).replaceAll("[\\[\\]]", "").equalsIgnoreCase(ChatColor.stripColor(lang.getMessage("AdminSignTitle")).replaceAll("[\\[\\]]", "")) && p.hasPermission("chestshop.admincreate")) {
             BlockState state = null;
 
@@ -191,7 +194,7 @@ public class SignListener implements Listener {
                 return;
             }
 
-            ItemStack item = p.getInventory().getItemInMainHand();
+            ItemStack item = p.getInventory().getItemInMainHand().clone();
             if (isBlacklisted(item.getType().toString())) {
                 p.sendMessage(lang.getMessage("ItemBlacklist"));
                 e.setCancelled(true);
@@ -235,7 +238,7 @@ public class SignListener implements Listener {
             p.playSound(p.getLocation(), "block.amethyst_block.place", 1.0f, 1.0f);
             plugin.getShopconfig().addShopToPlayer(p);
 
-            sign.setLine(3, amount + "x §r" + itemName);
+            sign.setLine(3, amount + "x\u00A0" + itemName);
             sign.update();
 
             //PostShopCreateEvent
@@ -249,7 +252,7 @@ public class SignListener implements Listener {
 
             double price = Double.parseDouble(getPrice(plugin.getShopconfig().getPrice(e.getClickedBlock().getLocation())));
 
-            ItemStack item = plugin.getShopconfig().NameToItem(plugin.getShopconfig().getItemName(clickedBlock.getLocation()));
+            ItemStack item = plugin.getShopconfig().NameToItem(plugin.getShopconfig().getItemName(clickedBlock.getLocation())).clone();
             if (item == null || item.getType() == Material.AIR) {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                 p.sendMessage(lang.getMessage("invalidMaterial"));
@@ -313,7 +316,7 @@ public class SignListener implements Listener {
             OfflinePlayer owner = plugin.getShopconfig().getOwner(e.getClickedBlock().getLocation());
             double price = Double.parseDouble(getPrice(plugin.getShopconfig().getPrice(e.getClickedBlock().getLocation())));
 
-            ItemStack item = plugin.getShopconfig().NameToItem(plugin.getShopconfig().getItemName(clickedBlock.getLocation()));
+            ItemStack item = plugin.getShopconfig().NameToItem(plugin.getShopconfig().getItemName(clickedBlock.getLocation())).clone();
 
             if (item == null || item.getType() == Material.AIR) {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
@@ -333,7 +336,6 @@ public class SignListener implements Listener {
             }
             Chest chest = (Chest) chestBlock.getState();
             Inventory chestInventory = chest.getInventory();
-
             int SignAmount = plugin.getShopconfig().getAmount(e.getClickedBlock().getLocation());
             int PlayerItemCount = countItems(p.getInventory(), item);
             int amount = SignAmount;
@@ -345,7 +347,6 @@ public class SignListener implements Listener {
                 }
             }
             price = (price/SignAmount)*amount;
-
 
             item.setAmount(amount);
             if (isBuying(plugin.getShopconfig().getPrice(e.getClickedBlock().getLocation()))) {
@@ -408,7 +409,7 @@ public class SignListener implements Listener {
         e.setLine(0, lang.getMessage("SignTitle"));
         e.setLine(1, price);
         e.setLine(2, p.getName());
-        e.setLine(3, amount + "x §r" + itemName);
+        e.setLine(3, amount + "x\u00A0" + itemName);
 
         //plugin.getShopconfig().addItemToShopConfig(p.getWorld().getName(), xCoord, yCoord, zCoord, itemName, p);
         plugin.getShopconfig().AddShopToShopConfig(new Shop(e.getBlock(), ShopType.SHOP, price, owner, foundItem, amount), itemName);
@@ -452,7 +453,6 @@ public class SignListener implements Listener {
         if (shopBuyEvent.isCancelled()) {
             return;
         }
-
         Economy economy = ChestShop.getEconomy();
         int amount = item.getAmount();
         int count = countItems(chestInv, item);
@@ -570,7 +570,9 @@ public class SignListener implements Listener {
     private Integer getAmount(String amount) {
         StringBuilder digits = new StringBuilder();
 
-        for (char c : amount.toCharArray()) {
+        String parts[] = amount.split("x", 2);
+
+        for (char c : parts[0].toCharArray()) {
             if (Character.isDigit(c)) {
                 digits.append(c);
             }

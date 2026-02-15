@@ -76,6 +76,6 @@ public class Shop {
 
     @Override
     public String toString() {
-        return "Shop[Sign="+sign+", ShopType="+type+", price="+price +", item="+item+", owner="+owner+", amount="+amount+"]";
+        return "Shop[Sign="+sign+", ShopType="+type+", price="+price +", item="+item+", owner="+owner+", amount="+amount+", location="+sign.getLocation()+"]";
     }
 }

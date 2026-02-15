@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface ChestShopAPI {
 
-    void registerCommand(String name, CommandExecutor executor);
+    void registerCommand(String name);
 
     List<Shop> getShops(UUID uuid);
     List<Shop> getShops(String ItemName);

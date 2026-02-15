@@ -22,7 +22,8 @@ public class ChestShopApiImpl implements ChestShopAPI {
 
 
     @Override
-    public void registerCommand(String name, CommandExecutor executor) {
+    public void registerCommand(String name) {
+
     }
 
     @Override

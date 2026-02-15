@@ -210,6 +210,9 @@ public class Shopconfig {
 
             //get Location
             String[] parts = key.split("§");
+            if (parts.length < 4) {
+                continue;
+            }
             String worldName = parts[0];
             int x = Integer.parseInt(parts[1]);
             int y = Integer.parseInt(parts[2]);
@@ -220,6 +223,7 @@ public class Shopconfig {
             if (!shopConfig.contains(section) || shopConfig.getString(section) == null || shopConfig.getString(section) == "") continue;
 
             if (loc.getBlock().getState() instanceof Sign sign) {
+                if (sign.getLine(2).isEmpty() || sign.getLine(2) == null || sign.getLine(2) == "") {continue;}
                 ShopType shopType = ShopType.SHOP;
                 if (sign.getLine(1).equals("§a[Adminshop]")) shopType = ShopType.ADMIN_SHOP;
                 int amount = 1;

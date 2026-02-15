@@ -1,7 +1,7 @@
 name: ChestShop
 version: '${project.version}'
 main: de.acranum.chestshop.ChestShop
-api-version: '1.21'
+api-version: '1.19'
 depend: [Vault]
 
 commands:

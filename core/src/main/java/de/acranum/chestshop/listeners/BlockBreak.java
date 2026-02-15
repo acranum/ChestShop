@@ -146,7 +146,7 @@ public class BlockBreak implements Listener {
                 Block currentBlock = currentLocation.getBlock();
 
                 if (currentBlock.getState() instanceof Sign sign) {
-                    if (plugin.getShopconfig().getItemName(currentLocation) == null) return;
+                    if (plugin.getShopconfig().getItemName(currentLocation) == null) continue;
 
                     if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle"))) {
                         if (!p.hasPermission("chestshop.interact")) {

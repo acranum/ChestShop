@@ -2,14 +2,19 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [1.5.1] - 2026-01-24
+## [1.5.1] - 2026-02-15
 
 ### Added
 - Multiple item support
 - ShopBuyEvent / ShopSellEvent
 
 ### Fixed
+- migration error
 - Changed sign edit mechanics
+- Item display error
+- Plugin Version minimum changed to 1.19
+- Dupe glich with damaged items
+- sign render error
 
 
 ## [1.5.0] - 2025-09-11
