@@ -218,6 +218,9 @@ public class Shopconfig {
             int y = Integer.parseInt(parts[2]);
             int z = Integer.parseInt(parts[3]);
             Location loc = new Location(Bukkit.getWorld(worldName), x, y, z);
+            if (loc.getWorld() == null) {
+                continue;
+            }
 
             String section = "shops." + loc.getWorld().getName() + "§" + loc.getBlockX() + "§" + loc.getBlockY() + "§" + loc.getBlockZ();
             if (!shopConfig.contains(section) || shopConfig.getString(section) == null || shopConfig.getString(section) == "") continue;

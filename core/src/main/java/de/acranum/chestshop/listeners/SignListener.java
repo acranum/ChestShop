@@ -1,5 +1,6 @@
 package de.acranum.chestshop.listeners;
 
+import com.sun.tools.jconsole.JConsoleContext;
 import de.acranum.chestshop.api.events.*;
 import de.acranum.chestshop.api.shop.DestroyReason;
 import de.acranum.chestshop.api.shop.Shop;
@@ -337,6 +338,13 @@ public class SignListener implements Listener {
             Chest chest = (Chest) chestBlock.getState();
             Inventory chestInventory = chest.getInventory();
             int SignAmount = plugin.getShopconfig().getAmount(e.getClickedBlock().getLocation());
+
+            if (SignAmount != Integer.parseInt(getPrice(sign.getLine(1)))) {
+                p.sendMessage(lang.getMessage("ErrorOccurred"));
+                sign.setLine(1, String.valueOf(SignAmount));
+                return;
+            }
+
             int PlayerItemCount = countItems(p.getInventory(), item);
             int amount = SignAmount;
             if (p.isSneaking()) {
