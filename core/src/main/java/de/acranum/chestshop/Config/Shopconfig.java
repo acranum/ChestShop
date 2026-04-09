@@ -5,10 +5,7 @@ import de.acranum.chestshop.Util.lang;
 import de.acranum.chestshop.Util.util;
 import de.acranum.chestshop.api.shop.Shop;
 import de.acranum.chestshop.api.shop.ShopType;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,13 +15,10 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Shopconfig {
 
@@ -106,6 +100,26 @@ public class Shopconfig {
         if (!shopConfig.contains(key) || shopConfig.getString(key) == null || shopConfig.getString(key) == "") return null;
         if (getShopType(location) == null) return null;
         return new Shop(location.getBlock(), getShopType(location), getPrice(location), getOwner(location), NameToItem(getItemName(location)), getAmount(location));
+    }
+    //real shop check (valid = true) only from config (valid = false)
+    public List<Location> getShops() {
+        List<Location> shops = new ArrayList<>();
+        ConfigurationSection shopsConfig = shopConfig.getConfigurationSection("shops");
+        if (shopsConfig == null) return shops;
+
+        for (String key : shopsConfig.getKeys(false)) {
+            String[] parts = key.split("§");
+            if (parts.length < 4 || shopConfig.getString("shops." + key).isEmpty() || shopConfig.getString("shops." + key) == null) continue; //isEmpty() ist die Methode
+            String worldName = parts[0];
+            int x = Integer.parseInt(parts[1]);
+            int y = Integer.parseInt(parts[2]);
+            int z = Integer.parseInt(parts[3]);
+            Location loc = new Location(Bukkit.getWorld(worldName), x, y, z);
+            if (loc.getWorld() == null) continue;
+
+            shops.add(loc);
+        }
+        return shops;
     }
 
     public ItemStack NameToItem(String ItemName) {
@@ -191,7 +205,6 @@ public class Shopconfig {
             }
         }
     }
-
     public void migrate() {
         ConfigurationSection shops = shopConfig.getConfigurationSection("shops");
         if (shops == null) return;

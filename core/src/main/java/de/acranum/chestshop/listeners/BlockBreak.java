@@ -19,6 +19,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -28,6 +30,9 @@ import java.util.Objects;
 public class BlockBreak implements Listener {
 
     ChestShop plugin = ChestShop.getPlugin(ChestShop.class);
+
+    final boolean Shop_hopper_protection = plugin.getDefaultConfig().defaultConfig.getBoolean("Shop_hopper_protection");
+    final boolean Shop_protection = plugin.getDefaultConfig().defaultConfig.getBoolean("Shop_protection");
 
     @EventHandler
     public void SignBreak(BlockBreakEvent e) {
@@ -180,32 +185,41 @@ public class BlockBreak implements Listener {
         Block chestBlock = Objects.requireNonNull(e.getSource().getLocation()).getBlock();
         Location chestLocation = chestBlock.getLocation();
 
-        final int[][] directions = {{0, 0, 1}, {0, 0, -1}, {1, 0, 0}, {-1, 0, 0}};
+        if (!Shop_hopper_protection) return;
 
-        if (!plugin.getDefaultConfig().defaultConfig.getBoolean("Shop_hopper_protection")) {
-            return;
+        if (getShopFromChest(chestLocation) != null) {
+            if (getShopFromChest(chestLocation).getItem() != null) {
+                e.setCancelled(true);
+            }
         }
-
-        for (int[] direction : directions) {
-            int xOffset = direction[0];
-            int yOffset = direction[1];
-            int zOffset = direction[2];
-
-            Location currentLocation = new Location(chestLocation.getWorld(), chestLocation.getBlockX() + xOffset, chestLocation.getBlockY() + yOffset, chestLocation.getBlockZ() + zOffset);
-            Block currentBlock = currentLocation.getBlock();
-
-            Material type = currentBlock.getType();
-            if (type == Material.OAK_SIGN || type == Material.OAK_WALL_SIGN) {
-                Sign sign = (Sign) currentBlock.getState();
-                if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle")) || sign.getLine(0).equalsIgnoreCase(lang.getMessage("AdminSignTitle"))) {
-                    if (plugin.getShopconfig().getItemName(currentLocation) != null) {
-                        e.setCancelled(true);
-
-                    }
+    }
+    @EventHandler
+    public void ShopExplosion(EntityExplodeEvent e) {
+        for (Block block : e.blockList()) {
+            if (block.getType() != Material.CHEST && !(block.getState() instanceof Sign)) continue;
+            if (getShopFromChest(block.getLocation()) != null || plugin.getShopconfig().getShop(block.getLocation()) != null) {
+                if (Shop_protection)
+                    e.blockList().removeIf(block_tmp -> block_tmp.getLocation().equals(block.getLocation()));
+                else {
+                    if (!destroyShop(block, DestroyReason.EXPLOSION)) e.blockList().removeIf(block_tmp -> block_tmp.getLocation().equals(block.getLocation()));
                 }
             }
         }
     }
+    @EventHandler
+    public void ShopBurn(BlockExplodeEvent e) {
+        for (Block block : e.blockList()) {
+            if (block.getType() != Material.CHEST && !(block.getState() instanceof Sign)) continue;
+            if (getShopFromChest(block.getLocation()) != null || plugin.getShopconfig().getShop(block.getLocation()) != null) {
+                if (Shop_protection)
+                    e.blockList().removeIf(block_tmp -> block_tmp.getLocation().equals(block.getLocation()));
+                else {
+                    if (!destroyShop(block, DestroyReason.EXPLOSION)) e.blockList().removeIf(block_tmp -> block_tmp.getLocation().equals(block.getLocation()));
+                }
+            }
+        }
+    }
+
     private String getPrice(String price) {
         String Preis;
         Preis = price.replace(" (Buying)", "").replaceAll("[ ]", "").replaceAll("[$]", "");
@@ -213,5 +227,37 @@ public class BlockBreak implements Listener {
         if (Preis.contains("x")) Preis = "0";
         if (Preis.isEmpty()) Preis = "0";
         return Preis;
+    }
+    // false -> canceled
+    private boolean destroyShop(Block block, DestroyReason destroyReason) {
+        ShopDestroyEvent shopDestroyEvent = new ShopDestroyEvent(plugin.getShopconfig().getShop(block.getLocation()), null, destroyReason);
+        Bukkit.getPluginManager().callEvent(shopDestroyEvent);
+        if (shopDestroyEvent.isCancelled()) { return false; }
+
+        plugin.getShopconfig().RemoveShopFromShopConfig(block.getLocation());
+        if (plugin.getShopconfig().getShop(block.getLocation()) == null) {
+            plugin.getShopconfig().removeShopFromPlayer(Objects.requireNonNull(shopDestroyEvent.getShop().getOwner().getPlayer()));
+        }
+        return true;
+    }
+
+    private Shop getShopFromChest(Location chest) {
+        final int[][] directions = {{0, 0, 1}, {0, 0, -1}, {1, 0, 0}, {-1, 0, 0}};
+
+        for (int[] direction : directions) {
+            int xOffset = direction[0];
+            int yOffset = direction[1];
+            int zOffset = direction[2];
+
+            Location currentLocation = new Location(chest.getWorld(), chest.getBlockX() + xOffset, chest.getBlockY() + yOffset, chest.getBlockZ() + zOffset);
+            Block currentBlock = currentLocation.getBlock();
+
+            Material type = currentBlock.getType();
+            if (type == Material.OAK_SIGN || type == Material.OAK_WALL_SIGN) {
+                Sign sign = (Sign) currentBlock.getState();
+                return plugin.getShopconfig().getShop(currentLocation);
+            }
+        }
+        return null;
     }
 }

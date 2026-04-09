@@ -7,7 +7,11 @@ import de.acranum.chestshop.Util.lang;
 import de.acranum.chestshop.api.addon;
 import de.acranum.chestshop.api.events.command.CommandEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
@@ -44,6 +48,9 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
                 case "reload":
                     reload(player);
                     return true;
+                case "cleanup":
+                    cleanup(player);
+                    return true;
             }
         } else player.sendMessage(lang.getMessage("noArr"));
         return false;
@@ -64,12 +71,34 @@ public class ChestShopCommand implements CommandExecutor, TabExecutor {
             p.sendMessage(lang.getMessage("reloadComplete"));
         } else p.sendMessage(lang.getMessage("noPermission"));
     }
+    private void cleanup(Player p) {
+        if (p.isOp()) {
+
+            List<Location> locations = plugin.getShopconfig().getShops();
+            int index = 0;
+
+            for (Location loc : locations) {
+                Block block = loc.getWorld().getBlockAt(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+                if (!(block.getState() instanceof Sign)) {
+                    plugin.getShopconfig().removeShopFromPlayer(plugin.getShopconfig().getShop(loc).getOwner().getPlayer());
+                    plugin.getShopconfig().RemoveShopFromShopConfig(loc);
+                    p.sendMessage("Removed invalid Shop at: " + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + " (" + index + "/" + (locations.size()-1) + ")");
+                }
+                index++;
+            }
+            addon.reloadAddons();
+            p.sendMessage(ChatColor.GREEN + "Success");
+        } else p.sendMessage(lang.getMessage("noPermission"));
+    }
 
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+        Player p = (Player) commandSender;
         final List<String> valdArguments = new ArrayList<>();
         if (args.length == 1) {
-            StringUtil.copyPartialMatches(args[0], Arrays.asList("info", "search", "reload"), valdArguments);
+            if (p.isOp()) StringUtil.copyPartialMatches(args[0], Arrays.asList("info", "search", "reload", "cleanup"), valdArguments);
+            else StringUtil.copyPartialMatches(args[0], Arrays.asList("info", "search"), valdArguments);
+
             return valdArguments;
         }
         if (args.length == 2 && args[0].toString().equals("search")) {

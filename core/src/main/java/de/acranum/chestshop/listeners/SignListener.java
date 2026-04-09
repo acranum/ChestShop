@@ -339,9 +339,9 @@ public class SignListener implements Listener {
             Inventory chestInventory = chest.getInventory();
             int SignAmount = plugin.getShopconfig().getAmount(e.getClickedBlock().getLocation());
 
-            if (SignAmount != Integer.parseInt(getPrice(sign.getLine(1)))) {
+            if (price != Integer.parseInt(getPrice(sign.getLine(1)))) {
                 p.sendMessage(lang.getMessage("ErrorOccurred"));
-                sign.setLine(1, String.valueOf(SignAmount));
+                sign.setLine(1, String.valueOf(price));
                 return;
             }
 

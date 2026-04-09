@@ -12,3 +12,6 @@ Taxes: 0
 
 # prevents Hoppers and Hopper Minecrads from stealing items from shops
 Shop_hopper_protection: true
+
+# prevents Explosion destruction
+Shop_protection: true

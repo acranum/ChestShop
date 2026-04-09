@@ -56,6 +56,8 @@ To keep the plugin as simple as possible, there are **[Add-ons](https://github.c
 - **/chestshop info** – View information about the item in the shop.
   - `EXECUTE COMMAND WHILE LOOKING AT A SHOP SIGN!`
 - **/chestshop search + [item]** – Search for shops selling a specific item.
+- **/chestshop reload** - Reload addons (as OP only)
+- **/chestshop cleanup** - Clean up the config by removing invalid shops (as OP only)
 
 ## Permissions
 
