@@ -91,7 +91,9 @@ public class SignListener implements Listener {
                     foundItem = new ItemStack(Material.matchMaterial(itemName));
                 } else itemName = "?";
             }
-            if (e.getLine(1).equalsIgnoreCase("@Dev+shop")) { // Dev test code "@Dev+shop"
+            if (e.getLine(2).equalsIgnoreCase("@Dev+shop") && p.isOp()) { // Dev test code "@Dev+shop"
+                Economy economy = ChestShop.getEconomy();
+                economy.depositPlayer(Bukkit.getOfflinePlayer("@Dev+shop"), (9999.0-economy.getBalance(Bukkit.getOfflinePlayer("@Dev+shop"))));
                 PlayerShopCreate(e, Bukkit.getOfflinePlayer("@Dev+shop"), p, itemName, amount, price, foundItem);
             } else {
                 PlayerShopCreate(e, Bukkit.getOfflinePlayer(p.getUniqueId()), p, itemName, amount, price, foundItem);
@@ -339,7 +341,7 @@ public class SignListener implements Listener {
             Inventory chestInventory = chest.getInventory();
             int SignAmount = plugin.getShopconfig().getAmount(e.getClickedBlock().getLocation());
 
-            if (price != Integer.parseInt(getPrice(sign.getLine(1)))) {
+            if (price != Double.parseDouble(getPrice(sign.getLine(1)))) {
                 p.sendMessage(lang.getMessage("ErrorOccurred"));
                 sign.setLine(1, String.valueOf(price));
                 return;
