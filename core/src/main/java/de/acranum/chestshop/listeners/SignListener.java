@@ -187,12 +187,12 @@ public class SignListener implements Listener {
                 p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("noPermission")));
                 return;
             }
-            if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle")) && !e.getPlayer().hasPermission("chestshop.create")) {
+            if (sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle")) && !e.getPlayer().hasPermission("chestshop.create") || sign.getLine(0).equalsIgnoreCase(lang.getMessage("SignTitle")) && !sign.getLine(2).equalsIgnoreCase(p.getName())) {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
                 p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(lang.getMessage("noPermission")));
                 return;
             }
-            if (!sign.getLine(2).equalsIgnoreCase(p.getName()) && !validNumber(sign.getLine(2)) || p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR) {
+            if (p.getInventory().getItemInMainHand() == null || p.getInventory().getItemInMainHand().getType() == Material.AIR) {
                 p.sendMessage(lang.getMessage("noItem"));
                 return;
             }
