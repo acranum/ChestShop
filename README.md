@@ -1,8 +1,8 @@
-![ChestSHopBanner](https://github.com/user-attachments/assets/206cbca6-8efb-4fe6-87da-17b750eb5509)
+<!-- ![ChestSHopBanner](https://github.com/user-attachments/assets/489a95e5-b71d-4eaf-ab03-a68539b7201f) -->
 
 # 💸 ChestShop 💸 
 
-**ChestShop** is a lightweight, high-performance plugin that allows players to create their own item shops using chests and signs. Designed for simplicity and speed, it integrates seamlessly with Vault and supports all major economy plugins. Whether you're running a survival server, a creative build, or a minigame hub, ChestShop provides a reliable and user-friendly marketplace solution.
+**ChestShop** is a lightweight, high-performance plugin that allows players to create their own item shops using chests and signs. It integrates seamlessly with Vault and supports all major economy plugins.
 
 ## Help:
 If you need help or you want to report a bug please open a ticket on my [discord](https://discord.com/invite/TdwCTqJ4sZ) server or an issue on my [Github](https://github.com/acranum/ChestShop/issues)
@@ -35,16 +35,19 @@ Compatible with plugins such as (LuckPerms, GroupManager, PowerRanks)
 
 
 ## Create Shop:
-1. To set the item for sale, place your item in the first slot of the chest. 
-If you want to specify the item later, you can leave the chest empty. This will display a `?` on the 4th line of the sign. 
-You can then set the item by right-clicking the sign while holding the item in your hand.
-2. Write in first Line of the sign `[Shop]` to create a shop / write `[aShop]` to create an admin shop
-3. in the 2nd line you can set the selling price (e.g. 100 = 100$). If you want your chest to buy items from other players, just write a `b` before or behind the price
-4. now you can click on `Done`, and your store sign should have been created
+1. Place a sign on the chest
+2. Write in first Line `Shop` to create a shop or write `aShop` to create an admin shop
+3. in the second line you can set the selling price (e.g. 100 = 100$). If you want your chest to buy items from other players, just write a `b` before or behind the price
+4. in the fourth line, you can specify the desired quantity of items that you want to sell or buy for the set price
+5. If you now click on `Done`, you can set the item for the chestshop by right clicking the sign with the item you want to sell in your hand
+6. Your shop should have been created
 
 ![ChestShopExplain](https://github.com/user-attachments/assets/0e4ecf1d-c910-4c2c-9162-ee63b7a5917c)
 
 ⚠️When sneaking, a whole stack is bought (if available)
+
+## Community Tutorials:
+[⏩| ChestShop Plugin [1.4] | Plugin Review     (Youtube)](https://www.youtube.com/watch?v=Kjj7P3YZJTE)
 
 ## [Addons](https://github.com/acranum/ChestShop-addons/blob/main/README.md)
 
@@ -68,9 +71,9 @@ chestshop.search
 chestshop.buy
 chestshop.admincreate
 chestshop.tp
-chestshop.interact
-chestshop.max.x 
+chestshop.interact  (allow players to open other players chests)
+chestshop.max.x     (maximum amount of shops per player)
 ```
 
 ## Thank You! 🙏
-Thank you for choosing ChestShop! I hope this plugin helps you build a thriving marketplace on your server. Your players’ buying and selling adventures are just a chest away!
+Thank you for choosing ChestShop! I hope this plugin helps you build a player driven economy on your server.
